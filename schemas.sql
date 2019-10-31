@@ -1,38 +1,56 @@
-:::SQL:::
-User:
-    Id: Int
-    email: varchar
-    password: varchar
-    q_category: varchar (foriegn key from category)
+CREATE DATABASE test;
 
-questions:
-    q_id: Int
-    category: varchar (import from category)
-    sub: varhar (import from category)
-    difficulty: Int
-    grouping: int (import from grouping)
-    rating: float (function of rating_counter)
+CREATE TABLE category(
+    cat TEXT NOT NULL UNIQUE,
+    sub_cat TEXT NOT NULL UNIQUE,
+    PRIMARY KEY (cat, sub_cat)
+);
 
-category:
-    category: varchar
-    sub_cat: varchar
+CREATE TABLE users(
+    id SERIAL UNIQUE,
+    email TEXT NOT NULL,
+    pass TEXT NOT NULL,
+    q_cat TEXT REFERENCES category(cat) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+);
 
-grouping:
-    id: int
-    company: varchar (unique)
+CREATE TABLE groups(
+    id SMALLINT,
+    company TEXT UNIQUE,
+    PRIMARY KEY (id)
+);
 
+CREATE TABLE questions(
+    id SMALLINT,
+    category TEXT REFERENCES category(cat) ON DELETE CASCADE,
+    sub_cat TEXT REFERENCES category(sub_cat) ON DELETE CASCADE,
+    difficulty INTEGER,
+    groups INTEGER REFERENCES groups(id) ON DELETE CASCADE,
+    rating DECIMAL,
+    rating_counter INTEGER,
+    PRIMARY KEY (id)
+);
 
-:::NO SQL:::
+INSERT INTO category(cat, sub_cat) values('Computer Science', 'Arrays');
+INSERT INTO category(cat, sub_cat) values('Computer Science', 'Sets');
+INSERT INTO category(cat, sub_cat) values('Computer Science', 'Hash Maps');
+INSERT INTO category(cat, sub_cat) values('Computer Science', 'Graphs');
+INSERT INTO category(cat, sub_cat) values('Computer Science', 'Recursion');
 
-question:
-    key: q_id:
-        question_text (raw text)
+INSERT INTO users(email, pass, cat) values('jabernall24@gmail.com', 'fuckidk', 'Computer Science');
+INSERT INTO users(email, pass, cat) values('mikemenendez@gmail.com', 'lkasjef', 'Computer Science');
 
-history:
-    key: user_id:
-        q_id (raw text)
-        rating_score (int)
+-- :::NO SQL::: --
 
-answers:
-    key: q_id:
-        question_answer (raw text)
+-- question:
+--     key: q_id:
+--         question_text (raw text)
+
+-- history:
+--     key: user_id:
+--         q_id (raw text)
+--         rating_score (int)
+
+-- answers:
+--     key: q_id:
+--         question_answer (raw text)

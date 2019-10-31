@@ -1,36 +1,28 @@
 const express = require('express');
 const app = express();
-const kk = require("knock-knock-jokes");
+
+// Connecting to db (below) ====================================================
+
+const postgresql = require('pg');
+const conString = "postgres://postgres:postgres@localhost:5432/test";
+
+var client = new postgresql.Client(conString);
+client.connect();
+
+// Connecting to db(above) ====================================================
 
 app.engine("html", require('ejs').renderFile);
 app.use(express.static("public"));
 
-//routes - Project/Homework 4
-
-app.get("/", function(req, res) {
-    res.render("index.html");
+app.get("/categories/all", function(req, res) {
+    client
+        .query('SELECT * FROM category WHERE cat = $1::text', ['Computer Science'])
+        .then(result => res.status(200).json(result.rows))
+        .catch(e => res.status(400).json(e))
+        .then(() => client.end())
 });
 
-app.get("/fs", function(req, res) {
-    res.render("fs.html");
-});
-
-app.get("/mem", function(req, res) {
-    res.render("mem.html");
-});
-
-app.get("/proc", function(req, res) {
-    res.render("proc.html");
-});
-
-app.get("/index", function(req, res) {
-    res.render("index.html");
-});
-
-app.get('*:x', function(req, res) {
-    res.send("ERROR 404: The url \"" + req.url.substr(1) + "\" was invalid.....here's a joke:\n" + kk());
-});
-
-app.listen(process.env.PORT, process.env.IP, function() {
+// process.env.PORT
+app.listen("8080", process.env.IP, function() {
     console.log("Express server is running....");
 });
