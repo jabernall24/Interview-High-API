@@ -1,0 +1,13 @@
+#This should build the postgress container
+#Post user: postgres
+#Post pass: postgres
+#Post host: db
+version: "3"
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+  # This will be where I will build the spring container if we need it
+  # web:
+  #   image:
