@@ -24,7 +24,7 @@ app.post('/add', function(req, res) {
     }
 
     client
-        .query('INSERT INTO users(email, pass, is_subscribed, cat, sub_cat) values($1::text, $2::text, $3::boolean, $4::text, $5::text[]);', [email, password, is_subscribed, category, sub_cat])
+        .query('INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values($1::text, $2::text, $3::boolean, $4::text, $5::text[]);', [email, password, is_subscribed, category, sub_cat])
         .then(result => res.status(200).json(result.rows))
         .catch(e => {
             if(e.code == "23505") {
@@ -41,7 +41,7 @@ app.post('/login', async function(req, res) {
     const password = req.body.password;
 
     await client
-        .query("SELECT * FROM users WHERE email = $1::text AND pass = $2::text", [email, password])
+        .query("SELECT * FROM users WHERE email = $1::text AND pwd_hash = $2::text", [email, password])
         .then(result => res.status(200).json(result.rows))
         .catch(e => res.status(400).json(e))
 });
