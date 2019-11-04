@@ -18,7 +18,7 @@ CREATE TABLE users(
     pass TEXT NOT NULL,
     is_subscribed BOOLEAN NOT NULL,
     cat TEXT NOT NULL,
-    sub_cat TEXT[5] NOT NULL, -- Unofficial reference to the category table(every sub_cat must be from the same category)
+    sub_cat TEXT[] NOT NULL, -- Unofficial reference to the category table(every sub_cat must be from the same category)
     PRIMARY KEY(user_id)
 );
 
