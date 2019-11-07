@@ -1,6 +1,7 @@
 
 const { Client } = require('pg');
-const client = new Client();
+
+const client = new Client(process.env.URL);
 
 client.connect(err => {
     if (err) {
