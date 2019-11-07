@@ -17,7 +17,7 @@ app.post('/add', function(req, res) {
         return res.status(400).json({"message": "Invalid Email"});
     }
 
-    const CATEGORIES = ['computer science']
+    const CATEGORIES = ['computer science'];
 
     if (CATEGORIES.indexOf(category) <= -1) {
         return res.status(400).json({"message": "Invalid Category"});

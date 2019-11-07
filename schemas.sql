@@ -35,40 +35,40 @@ CREATE TABLE question(
     category TEXT NOT NULL,
     subcategory TEXT NOT NULL,
     difficulty INTEGER CHECK(difficulty >= 1 AND difficulty <= 5),
-    company INTEGER REFERENCES company(company) ON DELETE CASCADE,
+    company TEXT NOT NULL REFERENCES company(company) ON DELETE CASCADE,
     rating DECIMAL,
     rating_counter INTEGER,
     FOREIGN KEY (category, subcategory) REFERENCES category(category, subcategory) ON DELETE CASCADE,
     PRIMARY KEY (question_id)
 );
 
-INSERT INTO category(category, subcategory) values(lower('Computer Science'), lower('Arrays'));
-INSERT INTO category(category, subcategory) values(lower('Computer Science'), lower('Sets'));
-INSERT INTO category(category, subcategory) values(lower('Computer Science'), lower('Hash Maps'));
-INSERT INTO category(category, subcategory) values(lower('Computer Science'), lower('Graphs'));
-INSERT INTO category(category, subcategory) values(lower('Computer Science'), lower('Sorting'));
+INSERT INTO category(category, subcategory) values('computer science', 'arrays');
+INSERT INTO category(category, subcategory) values('computer science', 'sets');
+INSERT INTO category(category, subcategory) values('computer science', 'hash maps');
+INSERT INTO category(category, subcategory) values('computer science', 'graphs');
+INSERT INTO category(category, subcategory) values('computer science', 'sorting');
 
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('tEst1@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"arrays"}');
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('TEst2@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"sets", "sorting"}');
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test3@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"graphs"}');
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test4@gMail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"graphs"}');
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('TEST5@GMAIL.COM'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"graphs"}');
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test6@gmail.com'), crypt('123456', gen_salt('bf', 14)), false, lower('Computer Science'), '{"hash maps"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test1@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"arrays"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test2@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"sets", "sorting"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test3@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"graphs"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test4@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"graphs"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test5@gmail.COM', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"graphs"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test6@gmail.com', crypt('123456', gen_salt('bf', 14)), false, 'computer science', '{hash maps}');
 
-INSERT INTO company(company) values(lower('Regular'));
+INSERT INTO company(company) values('regular');
 
-INSERT INTO question(title, category, subcategory, difficulty, company_id, rating, rating_counter) 
-            values('Implement quicksort', lower('Computer Science'), lower('Sorting'), 1, 1, 3, 1);
-INSERT INTO question(title, category, subcategory, difficulty, company_id, rating, rating_counter) 
-            values('Implement merge sort', lower('Computer Science'), lower('Sorting'), 1, 1, 3.5, 2);
-INSERT INTO question(title, category, subcategory, difficulty, company_id, rating, rating_counter) 
-            values('Insert into a BST', lower('Computer Science'), lower('Graphs'), 1, 1, 3, 2);
-INSERT INTO question(title, category, subcategory, difficulty, company_id, rating, rating_counter) 
-            values('Implement isBST', lower('Computer Science'), lower('Graphs'), 1, 1, 4, 3);
-INSERT INTO question(title, category, subcategory, difficulty, company_id, rating, rating_counter) 
-            values('Check anagram', lower('Computer Science'), lower('Hash Maps'), 1, 1, 3, 2);
-INSERT INTO question(title, category, subcategory, difficulty, company_id, rating, rating_counter) 
-            values('Check palindrome', lower('Computer Science'), lower('Arrays'), 1, 1, 3.3, 10);
+INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
+            values('Implement quicksort', 'computer science', 'sorting', 1, 'regular', 3, 1);
+INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
+            values('Implement merge sort', 'computer science', 'sorting', 1, 'regular', 3.5, 2);
+INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
+            values('Insert into a BST', 'computer science', 'graphs', 1, 'regular', 3, 2);
+INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
+            values('Implement isBST', 'computer science', 'graphs', 1, 'regular', 4, 3);
+INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
+            values('Check anagram', 'computer science', 'hash maps', 1, 'regular', 3, 2);
+INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
+            values('Check palindrome', 'computer science', 'arrays', 1, 'regular', 3.3, 10);
 -- :::NO SQL::: --
 
 -- question:
