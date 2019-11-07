@@ -10,10 +10,8 @@ app.post('/add', function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
     const is_subscribed = req.body.is_subscribed;
-    const category = req.body.category;
+    const category = req.body.category.toLowerCase();
     const subcategories = req.body.subcategories;
-    console.log(req.body)
-    const salt = "test"
 
     if(!validator.validate(email)) {
         return res.status(400).json({"message": "Invalid Email"});
@@ -21,18 +19,22 @@ app.post('/add', function(req, res) {
 
     const CATEGORIES = ['computer science']
 
-    if (CATEGORIES.indexOf(lower(category)) <= -1) {
+    if (CATEGORIES.indexOf(category) <= -1) {
         return res.status(400).json({"message": "Invalid Category"});
     }
 
+    for(let i = 0; i < subcategories.length; i++) {
+        subcategories[i] = subcategories[i].toLowerCase();
+    }
+
     client
-        .query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower($1::text), crypt($2::text, gen_salt('bf', 14)), $3::boolean, lower($4::text), lower($5::text[]));", [email, password, is_subscribed, category, subcategories])
-        .then(result => res.status(200).json(result.rows))
+        .query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower($1::text), crypt($2::text, gen_salt('bf', 14)), $3::boolean, lower($4::text), $5::text[]) RETURNING user_id;", [email, password, is_subscribed, category, subcategories])
+        .then(result => res.status(200).json(result.rows[0]))
         .catch(e => {
             if(e.code == "23505") {
                 return res.status(400).json({"message": "Email already exists."});
             } else {
-                return res.status(400).json({"message": e});
+                return res.status(400).json({"message": "Error: " + e});
             }
         })
 });
@@ -43,8 +45,8 @@ app.post('/login', async function(req, res) {
     const password = req.body.password;
 
     await client
-        .query("SELECT * FROM users WHERE email = lower($1::text) AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
-        .then(result => res.status(200).json(result.rows))
+        .query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = lower($1::text) AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
+        .then(result => res.status(200).json(result.rows[0]))
         .catch(e => res.status(400).json(e))
 });
 

@@ -25,9 +25,7 @@ CREATE TABLE users(
 );
 
 CREATE TABLE company(
-    -- company_id SERIAL,
     company TEXT NOT NULL,
-    -- PRIMARY KEY (company_id)
     PRIMARY KEY (company)
 );
 
@@ -50,12 +48,12 @@ INSERT INTO category(category, subcategory) values(lower('Computer Science'), lo
 INSERT INTO category(category, subcategory) values(lower('Computer Science'), lower('Graphs'));
 INSERT INTO category(category, subcategory) values(lower('Computer Science'), lower('Sorting'));
 
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('tEst1@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), lower('{"Arrays"}'));
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('TEst2@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), lower('{"Sets", "Sorting"}'));
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test3@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), lower('{"Graphs"}'));
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test4@gMail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), lower('{"Graphs"}'));
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('TEST5@GMAIL.COM'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), lower('{"Graphs"}'));
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test6@gmail.com'), crypt('123456', gen_salt('bf', 14)), false, lower('Computer Science'), lower('{"Hash Maps"}'));
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('tEst1@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"arrays"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('TEst2@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"sets", "sorting"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test3@gmail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"graphs"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test4@gMail.com'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"graphs"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('TEST5@GMAIL.COM'), crypt('123456', gen_salt('bf', 14)), true, lower('Computer Science'), '{"graphs"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower('test6@gmail.com'), crypt('123456', gen_salt('bf', 14)), false, lower('Computer Science'), '{"hash maps"}');
 
 INSERT INTO company(company) values(lower('Regular'));
 
