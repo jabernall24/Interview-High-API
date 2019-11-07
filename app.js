@@ -9,6 +9,6 @@ const routes = require('./routes');
 
 app.use('/users', routes.users);
 
-app.listen(process.env.PORT, process.env.IP, function() {
+app.listen(process.env.PORT, "localhost", function() {
     console.log("Express server is running....");
 });
