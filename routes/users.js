@@ -11,20 +11,22 @@ app.post('/add', function(req, res) {
     const password = req.body.password;
     const is_subscribed = req.body.is_subscribed;
     const category = req.body.category;
-    const sub_cat = req.body.sub_cat;
+    const subcategories = req.body.subcategories;
+    console.log(req.body)
+    const salt = "test"
 
     if(!validator.validate(email)) {
         return res.status(400).json({"message": "Invalid Email"});
     }
 
-    const CATEGORIES = ['Computer Science']
+    const CATEGORIES = ['computer science']
 
-    if (CATEGORIES.indexOf(category) <= -1) {
+    if (CATEGORIES.indexOf(lower(category)) <= -1) {
         return res.status(400).json({"message": "Invalid Category"});
     }
 
     client
-        .query('INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values($1::text, $2::text, $3::boolean, $4::text, $5::text[]);', [email, password, is_subscribed, category, sub_cat])
+        .query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower($1::text), crypt($2::text, gen_salt('bf', 14)), $3::boolean, lower($4::text), lower($5::text[]));", [email, password, is_subscribed, category, subcategories])
         .then(result => res.status(200).json(result.rows))
         .catch(e => {
             if(e.code == "23505") {
@@ -41,7 +43,7 @@ app.post('/login', async function(req, res) {
     const password = req.body.password;
 
     await client
-        .query("SELECT * FROM users WHERE email = $1::text AND pwd_hash = $2::text", [email, password])
+        .query("SELECT * FROM users WHERE email = lower($1::text) AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
         .then(result => res.status(200).json(result.rows))
         .catch(e => res.status(400).json(e))
 });
