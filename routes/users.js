@@ -6,7 +6,7 @@ const validator = require("email-validator");
 const client = require('../db');
 
 // Create user
-app.post('/user', function(req, res) {
+app.post('/create', function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
     const is_subscribed = req.body.is_subscribed;
@@ -40,7 +40,7 @@ app.post('/user', function(req, res) {
 });
 
 // Update user information
-app.put('/user', async function(req, res) {
+app.put('/:user_id', async function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
@@ -51,20 +51,20 @@ app.put('/user', async function(req, res) {
     let queryVals = [];
     let vals = [];
 
-    if("is_subscribed" in req.body) {
+    if(req.body.is_subscribed != undefined) {
         queryParams.push("is_subscribed");
         queryVals.push("$" + i + "::boolean");
         vals.push(req.body.is_subscribed);
         i += 1;
     }
     
-    if("category" in req.body) {
+    if(req.body.category != undefined ) {
         queryParams.push("category");
         queryVals.push("$" + i + "::text");
-        vals.push(req.body.category);
+        vals.push(req.body.category.toLowerCase());
         i += 1;
     }
-    if("subcategories" in req.body) {
+    if(req.body.subcategories != undefined ) {
         queryParams.push("subcategories");
         queryVals.push("$" + i + "::text[]");
         vals.push(req.body.subcategories.map(v => v.toLowerCase()));
@@ -74,7 +74,11 @@ app.put('/user', async function(req, res) {
     if(queryParams.length > 1){
         queryString += "("
     } else if(queryParams.length == 0) {
-        return res.status(400).json("{failure: 'nothing to change'}")
+        response = {
+            "statusCode": 400,
+            "message": "nothing to change"
+        }
+        return res.status(400).json(response);
     }
 
     for(var j = 0; j < queryParams.length; j++) {
@@ -135,7 +139,15 @@ app.post('/login', async function(req, res) {
 
     await client
         .query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = lower($1::text) AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
-        .then(result => res.status(200).json(result.rows[0]))
+        .then(result => {
+            response = [{
+                "success": true,
+                "message": ""
+            },
+                result.rows[0]
+            ];
+            res.status(200).json(response);
+        })
         .catch(e => res.status(400).json(e))
 });
 
