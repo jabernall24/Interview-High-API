@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const routes = require('./routes');
 
 app.use('/user', routes.users);
-app.use('/questions', routes.questions);
+app.use('/categories', routes.questions);
 
 app.listen(process.env.PORT, "localhost", function() {
     console.log("Express server is running....");
