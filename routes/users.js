@@ -2,15 +2,15 @@ const express = require('express');
 const app = express();
 
 const validator = require("email-validator");
-
-const client = require('../db');
+const client = require('../db/db');
 
 // Create user
 app.post('/create', function(req, res) {
+    console.log("K", req);
     const email = req.body.email;
     const password = req.body.password;
     const is_subscribed = req.body.is_subscribed;
-    const category = req.body.category.toLowerCase();
+    const category = req.body.category;
     const subcategories = req.body.subcategories;
 
     if(!validator.validate(email)) {
@@ -28,7 +28,7 @@ app.post('/create', function(req, res) {
     }
 
     client
-        .query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower($1::text), crypt($2::text, gen_salt('bf', 14)), $3::boolean, lower($4::text), $5::text[]) RETURNING user_id;", [email, password, is_subscribed, category, subcategories])
+        .query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower($1::text), crypt($2::text, gen_salt('bf', 14)), $3::boolean, $4::text, $5::text[]) RETURNING user_id;", [email, password, is_subscribed, category, subcategories])
         .then(result => res.status(200).json(result.rows[0]))
         .catch(e => {
             if(e.code == "23505") {
@@ -47,7 +47,7 @@ app.put('/:user_id', async function(req, res) {
     let i = 1;
 
     let queryString = "UPDATE users SET ";
-    let queryParams = [];
+    let queryString = [];
     let queryVals = [];
     let vals = [];
 
@@ -132,10 +132,46 @@ app.put('/:user_id', async function(req, res) {
         })
 })
 
+//get user by ID
+app.get('/user/:user_id', function (req, res) {
+    const userId = req.params.user_id;
+    const emailComing = req.body.email;
+
+    let query1 = 'SELECT * FROM users ' + 
+                 'WHERE user_id= $1';
+    
+    client
+    .query(query1, [userId])
+    .then(result => {
+        response = [
+            {
+                "success" : true,
+                "message" : ""
+            },
+            result.rows
+        ]
+        res.status(200).json(response);
+    })
+    .catch(e => {
+       response = [
+            {
+                "success" : false,
+                "message" : e
+            },
+            userId,
+            emailComing
+        ]
+        return res.status(400).json(response)
+    });
+});
+
 // Get user with email and password
 app.post('/login', async function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
+
+    console.log(email);
+    console.log(password);
 
     await client
         .query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = lower($1::text) AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
@@ -144,7 +180,7 @@ app.post('/login', async function(req, res) {
                 "success": true,
                 "message": ""
             },
-                result.rows[0]
+                result.rows[1]
             ];
             res.status(200).json(response);
         })
@@ -155,8 +191,46 @@ app.post('/login', async function(req, res) {
 app.get('/', async function(req, res) {
     await client
         .query("SELECT * FROM users;")
-        .then(result => res.status(200).json(result.rows))
+        .then(result => {
+            return res.status(200).json(result.rows)
+        })
         .catch(e => res.status(400).json(e))
 })
+// change password and add it to data bases
+app.put('/:user_id/password', async function (req, res) {
+
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const user_id = req.params.user_id;
+
+
+   let query="UPDATE users SET pwd_hash =crypt($1::text, gen_salt('bf', 14)) "
+        + "WHERE pwd_hash = crypt($2::text, gen_salt('bf', 14)) " 
+        + "AND user_id = $3 "
+        + "RETURNING user_id;"
+    let vals = [newPassword, oldPassword, user_id]
+
+    await client
+        .query(query, vals)
+        .then(result => {
+            response = [{
+                "success": true,
+                "message": "password was updated"
+                },
+                result['user_id']
+            ];
+            return res.status(200).json(response);
+        })
+        .catch( (e) => { 
+            response = {
+                "message" : "query did not work",
+                "error" : e
+            }; 
+            res.status(400).json(response)
+        })
+})
+
+
+
 
 module.exports = app;
