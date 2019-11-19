@@ -54,3 +54,7 @@ exports.questions_get_subcategories = async function (req, res){
     })
 
 };
+
+exports.user_questions = async function (req , res) {
+
+};
