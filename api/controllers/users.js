@@ -42,7 +42,7 @@ exports.user_update = async function(req, res) {
     let i = 1;
 
     let queryString = "UPDATE users SET ";
-    let queryString = [];
+    let queryParams = [];
     let queryVals = [];
     let vals = [];
 
