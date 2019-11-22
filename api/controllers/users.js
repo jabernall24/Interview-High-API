@@ -2,7 +2,7 @@ const client = require('../../db/db').client;
 const validator = require("email-validator");
 
 exports.user_create = function(req, res) {
-    console.log("K", req);
+
     const email = req.body.email;
     const password = req.body.password;
     const is_subscribed = req.body.is_subscribed;
