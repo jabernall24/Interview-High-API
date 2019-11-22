@@ -16,7 +16,7 @@ client.connect(err => {
     }
 })
 
-module.exports = [
+module.exports = {
   client,
   dynamoDB
-]
+}

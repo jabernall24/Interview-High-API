@@ -1,4 +1,4 @@
-const client = require('../../db/db');
+const client = require('../../db/db').client;
 const validator = require("email-validator");
 
 exports.user_create = function(req, res) {
