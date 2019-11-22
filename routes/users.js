@@ -21,4 +21,7 @@ app.get('/', UserController.user_test_all);
 // change password and add it to data bases
 app.put('/:user_id/password', UserController.user_update_password);
 
+//get question history
+app.get('/:user_id/questions', UserController.user_questions);
+
 module.exports = app;

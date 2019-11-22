@@ -1,8 +1,7 @@
 const client = require('../../db/db').client;
 const validator = require("email-validator");
 
-exports.user_create = function(req, res) {
-
+exports.user_create = async function(req, res) {
     const email = req.body.email;
     const password = req.body.password;
     const is_subscribed = req.body.is_subscribed;
@@ -23,7 +22,7 @@ exports.user_create = function(req, res) {
         subcategories[i] = subcategories[i].toLowerCase();
     }
 
-    client
+    await client
         .query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower($1::text), crypt($2::text, gen_salt('bf', 14)), $3::boolean, $4::text, $5::text[]) RETURNING user_id;", [email, password, is_subscribed, category, subcategories])
         .then(result => res.status(200).json(result.rows[0]))
         .catch(e => {
@@ -127,14 +126,14 @@ exports.user_update = async function(req, res) {
         })
 };
 
-exports.user_by_id = function (req, res) {
+exports.user_by_id = async function (req, res) {
     const userId = req.params.user_id;
     const emailComing = req.body.email;
 
     let query1 = 'SELECT * FROM users ' + 
                  'WHERE user_id= $1';
     
-    client
+    await client
     .query(query1, [userId])
     .then(result => {
         response = [
@@ -226,3 +225,7 @@ exports.user_update_password =  async function (req, res) {
             res.status(400).json(response)
         })
 };
+
+exports.user_questions = async function (res, req) {
+    
+}
