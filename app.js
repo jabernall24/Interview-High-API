@@ -15,3 +15,5 @@ app.use('/pointbreak', routes.pointbreak);
 app.listen(process.env.PORT, "localhost", function() {
     console.log("Express server is running....");
 });
+
+module.exports = app;

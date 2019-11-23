@@ -1,42 +1,59 @@
 const client = require('../../db/db').client;
 
+function getArrayFromArrayOfDictionaries(arr) {
+    let result = []
+
+    for(item in arr) {
+        Object.keys(arr[item]).forEach(function(key) {
+            let val = arr[item][key];
+            result.push(val);
+        });
+    }
+
+    return result;
+}
+
 exports.get_all_categories = async function (req, res) {
     let query = "SELECT DISTINCT category FROM category;"
     client
-    .query(query)
-    .then(result => {
-        
-        let dArray = result.rows;
+        .query(query)
+        .then(result => {
+            
+            let categories = getArrayFromArrayOfDictionaries(result.rows);
 
-        let categories = []
-        for(item in dArray) {
-            Object.keys(dArray[item]).forEach(function(key) {
-                let val = dArray[item][key];
-                categories.push(val);
-            });
-        }
-
-        response = [
-            {
-                "success" : true,
-                "message" : "It was a success"
-            },
-            {
-                "categories": categories
+            if(categories.length == 0) {
+                return res.status(400).json([
+                    {
+                        "success" : false,
+                        "message" : "Invalid category"
+                    },
+                    {
+                        "categories": null
+                    }
+                ]);
             }
-        ]
-        res.status(200).json(response)
-    })
-    .catch(e => {
-        response = [
-            {
-                "success": false,
-                "message": e
-            }
-        ];
-        res.status(400).json(response);
 
-    })
+            response = [
+                {
+                    "success" : true,
+                    "message" : ""
+                },
+                {
+                    "categories": categories
+                }
+            ]
+            return res.status(200).json(response)
+        })
+        .catch(e => {
+            response = [
+                {
+                    "success": false,
+                    "message": e
+                }
+            ];
+            return res.status(400).json(response);
+
+        })
 };
 
 exports.get_all_subcategories = async function (req, res){
@@ -48,14 +65,18 @@ exports.get_all_subcategories = async function (req, res){
         .query(query, params)
         .then(result => {
 
-            let dArray = result.rows;
+            let subcats = getArrayFromArrayOfDictionaries(result.rows);
 
-            let subcats = []
-            for(item in dArray) {
-                Object.keys(dArray[item]).forEach(function(key) {
-                    let val = dArray[item][key];
-                    subcats.push(val);
-                });
+            if(subcats.length == 0) {
+                return res.status(400).json([
+                    {
+                        "success" : false,
+                        "message" : "Invalid category"
+                    },
+                    {
+                        "categories": null
+                    }
+                ]);
             }
 
             response = [
@@ -67,7 +88,7 @@ exports.get_all_subcategories = async function (req, res){
                     "subcategories": subcats
                 }
             ]
-            res.status(200).json(response)
+            return res.status(200).json(response)
         })
         .catch(e => {
             response = [
@@ -76,7 +97,7 @@ exports.get_all_subcategories = async function (req, res){
                     "message": e
                 }
             ];
-            res.status(400).json(response);
+            return res.status(400).json(response);
 
         })
 

@@ -115,14 +115,14 @@ exports.user_update = async function(req, res) {
             } else {
                 response.push(result.rows[0]);
             }
-            res.status(200).json(response)
+            return res.status(200).json(response)
         })
         .catch(e => {
             response = {
                 "success": false,
                 "message": e
             }
-            res.status(400).json(e);
+            return res.status(400).json(e);
         })
 };
 
@@ -143,7 +143,7 @@ exports.user_by_id = async function (req, res) {
             },
             result.rows
         ]
-        res.status(200).json(response);
+        return res.status(200).json(response);
     })
     .catch(e => {
        response = [
@@ -174,7 +174,7 @@ exports.user_by_email_password = async function(req, res) {
             },
                 result.rows[1]
             ];
-            res.status(200).json(response);
+            return res.status(200).json(response);
         })
         .catch(e => res.status(400).json(e))
 };
@@ -215,14 +215,14 @@ exports.user_update_password =  async function (req, res) {
             else {
                 response.push(result.rows);
             }
-            res.status(200).json(response);
+            return res.status(200).json(response);
         })
         .catch( (e) => { 
             response = {
                 "message" : "query did not work",
                 "error" : e
             }; 
-            res.status(400).json(response)
+            return res.status(400).json(response)
         })
 };
 

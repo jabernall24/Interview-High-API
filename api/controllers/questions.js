@@ -59,7 +59,7 @@ exports.create_new_question = async function(req, res) {
                         }
                     ];
 
-                    res.status(400).json(response);
+                    return res.status(400).json(response);
                 } else {
                     const response = [
                         {
@@ -71,7 +71,7 @@ exports.create_new_question = async function(req, res) {
                         }
                     ];
 
-                    res.status(200).json(response);
+                    return res.status(200).json(response);
                 }
               });
         })
@@ -86,6 +86,6 @@ exports.create_new_question = async function(req, res) {
                 }
             ];
 
-            res.status(400).json(response);
+            return res.status(400).json(response);
         })
 };
