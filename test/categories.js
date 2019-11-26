@@ -8,53 +8,42 @@ chai.use(chaiHttp);
 const app = require('../app');
 
 describe('/categories', () => {
-    it('Returns a 200 response', (done) => {
+    it('Returns a 200 response when everything is fine', (done) => {
         chai.request(app)
             .get('/categories')
-            .end((error, response) => {
-                if (error) done(error);
-                // Now let's check our response
+            .then(response => {
                 expect(response).to.have.status(200);
                 done();
+            })
+            .catch(error => {
+                done(error);
             });
     });
 });
 
-describe('/categories/alskjdnfa', () => {
-    it('Returns a 400 response', (done) => {
+describe('/categories/:category', function() {
+
+    it('Returns a 400 response when category is invalid', (done) => {
         chai.request(app)
             .get('/categories/alskjdnfa')
-            .end((error, response) => {
-                if(error) done(error);
-
+            .then(response => {
                 expect(response).to.have.status(400);
                 done();
+            })
+            .catch(error => {
+                done(error);
             });
     });
-});
 
-describe('/categories/computer science', () => {
-    it('Returns a 200 response', (done) => {
+    it('Returns a 200 response when valid category is passed', (done) => {
         chai.request(app)
             .get('/categories/computer science')
-            .end((error, response) => {
-                if(error) done(error);
-
+            .then(response => {
                 expect(response).to.have.status(200);
                 done();
-            });
+            })
+            .catch(error => {
+                done(error);
+            })
     });
 });
-
-// describe('/categories/computer science', () => {
-//     it('Returns a list of subcategories', (done) => {
-//         chai.request(app)
-//             .get('/categories/computer science')
-//             .end((error, response) => {
-//                 if(error) done(error);
-
-//                 expect(response).to.have
-//                 done();
-//             });
-//     });
-// });

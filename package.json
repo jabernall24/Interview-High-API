@@ -19,8 +19,11 @@
     "pre-commit": "^1.2.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --exit"
   },
+  "pre-commit": [
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jabernall24/Interview-High-API.git"
