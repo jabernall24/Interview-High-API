@@ -22,7 +22,7 @@ exports.get_all_categories =  async function (req, res) {
 			let categories = getArrayFromArrayOfDictionaries(result.rows);
 
 			if(categories.length == 0) {
-				res.status(400).json([
+				return res.status(400).json([
 					{
 						"success" : false,
 						"message" : "Invalid category"
@@ -42,7 +42,7 @@ exports.get_all_categories =  async function (req, res) {
 					"categories": categories
 				}
 			];
-			res.status(200).json(response);
+			return res.status(200).json(response);
 		})
 		.catch(e => {
 			const response = [
@@ -51,7 +51,7 @@ exports.get_all_categories =  async function (req, res) {
 					"message": e
 				}
 			];
-			res.status(400).json(response);
+			return res.status(400).json(response);
 
 		});
 };
@@ -68,7 +68,7 @@ exports.get_all_subcategories = async function (req, res){
 			let subcats = getArrayFromArrayOfDictionaries(result.rows);
 
 			if(subcats.length == 0) {
-				res.status(400).json([
+				return res.status(400).json([
 					{
 						"success" : false,
 						"message" : "Invalid category"
@@ -88,7 +88,7 @@ exports.get_all_subcategories = async function (req, res){
 					"subcategories": subcats
 				}
 			];
-			res.status(200).json(response);
+			return res.status(200).json(response);
 		})
 		.catch(e => {
 			const response = [
@@ -97,7 +97,7 @@ exports.get_all_subcategories = async function (req, res){
 					"message": e
 				}
 			];
-			res.status(400).json(response);
+			return res.status(400).json(response);
 
 		});
 

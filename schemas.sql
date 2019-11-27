@@ -1,4 +1,4 @@
-CREATE DATABASE test;
+-- CREATE DATABASE test;
 
 DROP TABLE question;
 DROP TABLE company;
