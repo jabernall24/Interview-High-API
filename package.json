@@ -15,13 +15,16 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "eslint": "^6.7.1",
     "mocha": "^6.2.2",
     "pre-commit": "^1.2.2"
   },
   "scripts": {
-    "test": "mocha --exit"
+    "test": "mocha --exit",
+    "eslint": "npx eslint api/* db/* routes/* test/* app.js"
   },
   "pre-commit": [
+    "eslint",
     "test"
   ],
   "repository": {
