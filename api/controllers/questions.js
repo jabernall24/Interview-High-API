@@ -1,60 +1,91 @@
-const client = require('../../db/db');
+const client = require('../../db/db').client;
+const dynamoDB = require('../../db/db').dynamoDB;
 
-exports.questions_get_all = async function (req, res) {
-    let query = "SELECT * FROM category;"
-    client
-    .query(query)
-    .then(result => {
-        response = [
-            {
-                "success" : true,
-                "message" : "It was a success"
-            },
-            result.rows
-        ]
-        res.status(200).json(response)
-    })
-    .catch(e => {
-        response = [
-            {
-                "success": false,
-                "message": e
-            }
-        ];
-        res.status(400).json(response);
+exports.create_new_question = async function(req, res) {
 
-    })
-};
+    let title = req.body.title;
+    let category = req.body.category.toLowerCase();
+    let subcategory = req.body.subcategory.toLowerCase();
+    let difficulty = req.body.difficulty;
+    let company = req.body.company;
+    let rating = 0;
+    let rating_counter = 0;
+    let question = req.body.question;
+    let answer = req.body.answer;
 
-exports.questions_get_subcategories = async function (req, res){
-    
-    query = "SELECT "
+    let queryString = "INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) values($1::text, $2::text, $3::text, $4::int, $5::text, $6::int, $7::int) RETURNING *;";
+    let queryValues = [title, category, subcategory, difficulty, company, rating, rating_counter];
 
     client
-    .query(query)
-    .then(result => {
-        response = [
-            {
-                "success" : true,
-                "message" : "get subcategories worked"
-            },
-            result.rows
-        ]
-        res.status(200).json(response)
-    })
-    .catch(e => {
-        response = [
-            {
-                "success": false,
-                "message": e
-            }
-        ];
-        res.status(400).json(response);
+        .query(queryString, queryValues)
+        .then(result => {
+            let field = result.rows[0];
+            console.log(field.question_id);
 
-    })
+            var params = {
+                RequestItems: {
+                    "Interview-High-Questions": [
+                     {
+                       PutRequest: {
+                         Item: {
+                            "pk": { "N": field.question_id.toString() },
+                            "sk": { "S": "Q" },
+                            "Question": { "L": question.map(x => { return { "S": x.toString() }}) }
+                         }
+                       }
+                     },
+                     {
+                       PutRequest: {
+                         Item: {
+                            "pk": { "N": field.question_id.toString() },
+                            "sk": { "S": "A" },
+                            "Answer": { "L": answer.map(x => { return { "S": x.toString() }}) }
+                         }
+                       }
+                     }
+                  ]
+                }
+              };
 
-};
+              dynamoDB.batchWriteItem(params, function(err, data) {
+                if (err) {
+                    const response = [
+                        {
+                            "success": false,
+                            "message": err
+                        },
+                        {
+                            "question_id": null
+                        }
+                    ];
 
-exports.user_questions = async function (req , res) {
+                    return res.status(400).json(response);
+                } else {
+                    const response = [
+                        {
+                            "success": true,
+                            "message": ""
+                        },
+                        {
+                            "question_id": field.question_id
+                        }
+                    ];
 
+                    return res.status(200).json(response);
+                }
+              });
+        })
+        .catch(e => {
+            const response = [
+                {
+                    "success": false,
+                    "message": e
+                },
+                {
+                    "question_id": null
+                }
+            ];
+
+            return res.status(400).json(response);
+        })
 };

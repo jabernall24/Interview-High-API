@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "aws-sdk": "^2.575.0",
     "dotenv": "^8.2.0",
     "ejs": "^2.7.1",
     "email-validator": "^2.0.4",
@@ -11,10 +12,18 @@
     "pg": "^7.12.1",
     "shrinkwrap": "^0.4.0"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.2",
+    "pre-commit": "^1.2.2"
   },
+  "scripts": {
+    "test": "mocha --exit"
+  },
+  "pre-commit": [
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jabernall24/Interview-High-API.git"
