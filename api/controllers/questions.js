@@ -48,6 +48,7 @@ exports.create_new_question = async function(req, res) {
 			};
 
 			dynamoDB.batchWriteItem(params, function(err, data) {
+				console.log(data);
 				if (err) {
 					const response = [
 						{

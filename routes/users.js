@@ -22,6 +22,6 @@ app.get("/", UserController.user_test_all);
 app.put("/:user_id/password", UserController.user_update_password);
 
 //get question history
-app.get("/:user_id/questions", UserController.user_questions);
+// app.get("/:user_id/questions", UserController.user_questions);
 
 module.exports = app;

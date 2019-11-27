@@ -226,6 +226,6 @@ exports.user_update_password =  async function (req, res) {
 		});
 };
 
-exports.user_questions = async function (res, req) {
+// exports.user_questions = async function (res, req) {
     
-};
+// };
