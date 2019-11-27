@@ -10,4 +10,3 @@
     - https://docs.aws.amazon.com/cli/latest/userguide/install-cliv1.html
 4. Give exeute permission to the script
     - chmod +x start.sh
-
