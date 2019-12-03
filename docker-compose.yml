@@ -11,3 +11,10 @@ services:
   # This will be where I will build the spring container if we need it
   # web:
   #   image:
+  
+  
+  dynamodb:
+    image: amazon/dynamodb-local
+    ports:
+        - "8000:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
