@@ -12,7 +12,7 @@ RUN apk --no-cache add nodejs-current npm
 COPY package.json ./
 
 # Installs the dependencies as needed and creates the needed directories for building
-RUN npm ci && mkdir interview-high-backend && mv ./node_modules ./interview-high-backend
+RUN npm install && mkdir interview-high-backend && mv ./node_modules ./interview-high-backend
 
 # Sets working directory to the angular application
 WORKDIR /interview-high-backend
