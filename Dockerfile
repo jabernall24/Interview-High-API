@@ -9,7 +9,7 @@ FROM alpine:latest
 RUN apk --no-cache add nodejs-current npm
 
 # Copies over the package.json and lock from the git repo so as to decrease the build times
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 # Installs the dependencies as needed and creates the needed directories for building
 RUN npm ci && mkdir interview-high-backend && mv ./node_modules ./interview-high-backend
