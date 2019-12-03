@@ -31,4 +31,4 @@ ENV URL ${URL}
 EXPOSE 80
 
 # Installs the dependencies and starts the express application
-RUN npm install && node app.js
+RUN npm install
