@@ -10,7 +10,7 @@ app.post("/create", UserController.user_create);
 app.put("/:user_id", UserController.user_update);
 
 //get user by ID
-app.get("/user/:user_id", UserController.user_by_id);
+app.get("/:user_id", UserController.user_by_id);
 
 // Get user with email and password
 app.post("/login", UserController.user_by_email_password);
