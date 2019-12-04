@@ -12,8 +12,8 @@ app.use("/categories", routes.categories);
 app.use("/questions", routes.questions);
 app.use("/pointbreak", routes.pointbreak);
 
-app.listen(process.env.PORT, "localhost", function() {
-	console.log("Express server is running.... " + process.env.PORT);
+app.listen("80", "localhost", function() {
+	console.log("Express server is running.... " + "80");
 });
 
 module.exports = app;
