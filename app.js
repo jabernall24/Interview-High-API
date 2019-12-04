@@ -12,7 +12,7 @@ app.use("/categories", routes.categories);
 app.use("/questions", routes.questions);
 app.use("/pointbreak", routes.pointbreak);
 
-app.listen("80", "localhost", function() {
+app.listen(process.env.PORT, process.env.HOST, function() {
 	console.log("Express server is running.... " + "80");
 });
 
