@@ -168,22 +168,19 @@ exports.user_by_email_password = async function(req, res) {
 	await client
 		.query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = lower($1::text) AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
 		.then(result => {
+			if(result.length == 0) {
+				return res.status(200).json([{
+					"success": false,
+					"message": "Invalid email or password"
+				}]);
+			} 
 			const response = [{
 				"success": true,
 				"message": ""
 			},
-			result.rows[1]
+			result.rows[0]
 			];
 			return res.status(200).json(response);
-		})
-		.catch(e => res.status(400).json(e));
-};
-
-exports.user_test_all = async function(req, res) {
-	await client
-		.query("SELECT * FROM users;")
-		.then(result => {
-			return res.status(200).json(result.rows);
 		})
 		.catch(e => res.status(400).json(e));
 };
