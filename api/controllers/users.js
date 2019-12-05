@@ -172,7 +172,7 @@ exports.user_by_email_password = async function(req, res) {
 				"success": true,
 				"message": ""
 			},
-			result.rows[1]
+			result.rows[0]
 			];
 			return res.status(200).json(response);
 		})
