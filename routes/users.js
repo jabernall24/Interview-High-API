@@ -15,9 +15,6 @@ app.get("/:user_id", UserController.user_by_id);
 // Get user with email and password
 app.post("/login", UserController.user_by_email_password);
 
-// Endpoint used to test I did not break anything on other files
-app.get("/", UserController.user_test_all);
-
 // change password and add it to data bases
 app.put("/:user_id/password", UserController.user_update_password);
 

@@ -179,15 +179,6 @@ exports.user_by_email_password = async function(req, res) {
 		.catch(e => res.status(400).json(e));
 };
 
-exports.user_test_all = async function(req, res) {
-	await client
-		.query("SELECT * FROM users;")
-		.then(result => {
-			return res.status(200).json(result.rows);
-		})
-		.catch(e => res.status(400).json(e));
-};
-
 exports.user_update_password =  async function (req, res) { 
 	const oldPassword = req.body.oldPassword;
 	const newPassword = req.body.newPassword;
