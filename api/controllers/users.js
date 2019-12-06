@@ -222,7 +222,3 @@ exports.user_update_password =  async function (req, res) {
 			return res.status(400).json(response);
 		});
 };
-
-// exports.user_questions = async function (res, req) {
-    
-// };
