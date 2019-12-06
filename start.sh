@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Start up the docker container
+docker-compose up -d
+
 # Create DynamoDB
 aws dynamodb create-table \
     --table-name test \

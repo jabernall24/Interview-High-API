@@ -48,27 +48,27 @@ INSERT INTO category(category, subcategory) values('computer science', 'hash map
 INSERT INTO category(category, subcategory) values('computer science', 'graphs');
 INSERT INTO category(category, subcategory) values('computer science', 'sorting');
 
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test1@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"arrays"}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test1@gmail.com', crypt('123456', gen_salt('bf', 14)), false, 'computer science', '{"arrays"}');
 INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test2@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"sets", "sorting"}');
 INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test3@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"graphs"}');
 INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test4@gmail.com', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"graphs"}');
 INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test5@gmail.COM', crypt('123456', gen_salt('bf', 14)), true, 'computer science', '{"graphs"}');
-INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test6@gmail.com', crypt('123456', gen_salt('bf', 14)), false, 'computer science', '{hash maps}');
+INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values('test6@gmail.com', crypt('123456', gen_salt('bf', 14)), false, 'computer science', '{"hash maps"}');
 
-INSERT INTO company(company) values('regular');
+INSERT INTO company(company) values('Interview High');
 
 INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
-            values('Implement quicksort', 'computer science', 'sorting', 1, 'regular', 3, 1);
+            values('Implement quicksort', 'computer science', 'sorting', 1, 'Interview High', 3, 1);
 INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
-            values('Implement merge sort', 'computer science', 'sorting', 1, 'regular', 3.5, 2);
+            values('Implement merge sort', 'computer science', 'sorting', 1, 'Interview High', 3.5, 2);
 INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
-            values('Insert into a BST', 'computer science', 'graphs', 1, 'regular', 3, 2);
+            values('Insert into a BST', 'computer science', 'graphs', 1, 'Interview High', 3, 2);
 INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
-            values('Implement isBST', 'computer science', 'graphs', 1, 'regular', 4, 3);
+            values('Implement isBST', 'computer science', 'graphs', 1, 'Interview High', 4, 3);
 INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
-            values('Check anagram', 'computer science', 'hash maps', 1, 'regular', 3, 2);
+            values('Check anagram', 'computer science', 'hash maps', 1, 'Interview High', 3, 2);
 INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) 
-            values('Check palindrome', 'computer science', 'arrays', 1, 'regular', 3.3, 10);
+            values('Check palindrome', 'computer science', 'arrays', 1, 'Interview High', 3.3, 10);
 -- :::NO SQL::: --
 
 -- question:
