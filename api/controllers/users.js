@@ -159,7 +159,7 @@ exports.user_by_id = async function (req, res) {
 };
 
 exports.user_by_email_password = async function(req, res) {
-	let email = req.body.email
+	let email = req.body.email;
 	const password = req.body.password;
 
 	if(email == undefined || password == undefined) {
@@ -168,9 +168,9 @@ exports.user_by_email_password = async function(req, res) {
 				"success": false,
 				"message": "Email or password not provided"
 			}
-		])
+		]);
 	}
-	email = email.toLowerCase()
+	email = email.toLowerCase();
 
 	await client
 		.query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = $1::text AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
@@ -185,7 +185,7 @@ exports.user_by_email_password = async function(req, res) {
 				"success": true,
 				"message": ""
 			},
-			result.rows
+			JSON.parse(result.rows)
 			];
 			return res.status(200).json(response);
 		})
