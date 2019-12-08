@@ -5,7 +5,7 @@ const chaiHttp = require("chai-http");
 
 chai.use(chaiHttp);
 
-const app = require("../app");
+const app = require("../app").app;
 
 describe("/categories", () => {
 	it("Returns a 200 response when everything is fine", (done) => {
