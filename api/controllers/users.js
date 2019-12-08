@@ -181,13 +181,13 @@ exports.user_by_email_password = async function(req, res) {
 					"message": "Invalid email or password"
 				}]);
 			} 
-			const response = [{
-				"success": true,
-				"message": ""
-			},
-			JSON.parse(result.rows)
-			];
-			return res.status(200).json(response);
+			// const response = [{
+			// 	"success": true,
+			// 	"message": ""
+			// },
+			// JSON.parse(result.rows)
+			// ];
+			return res.status(200).json(result.rows);
 		})
 		.catch(e => res.status(400).json(e));
 };
