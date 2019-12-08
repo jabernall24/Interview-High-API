@@ -2,10 +2,10 @@ const client = require("../../db/db").client;
 const validator = require("email-validator");
 
 exports.user_create = async function(req, res) {
-	const email = req.body.email;
+	const email = req.body.email.toLowerCase();
 	const password = req.body.password;
 	const is_subscribed = req.body.is_subscribed;
-	const category = req.body.category;
+	const category = req.body.category.toLowerCase();
 	const subcategories = req.body.subcategories;
 
 	if(!validator.validate(email)) {
@@ -23,7 +23,7 @@ exports.user_create = async function(req, res) {
 	}
 
 	await client
-		.query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values(lower($1::text), crypt($2::text, gen_salt('bf', 14)), $3::boolean, $4::text, $5::text[]) RETURNING user_id;", [email, password, is_subscribed, category, subcategories])
+		.query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values($1::text, crypt($2::text, gen_salt('bf', 14)), $3::boolean, $4::text, $5::text[]) RETURNING user_id;", [email, password, is_subscribed, category, subcategories])
 		.then(result => res.status(200).json(result.rows[0]))
 		.catch(e => {
 			if(e.code == "23505") {
@@ -35,7 +35,7 @@ exports.user_create = async function(req, res) {
 };
 
 exports.user_update = async function(req, res) {
-	const email = req.body.email;
+	const email = req.body.email.toLowerCase();
 	const password = req.body.password;
 
 	let i = 1;
@@ -128,7 +128,7 @@ exports.user_update = async function(req, res) {
 
 exports.user_by_id = async function (req, res) {
 	const userId = req.params.user_id;
-	const emailComing = req.body.email;
+	const emailComing = req.body.email.toLowerCase();
 
 	let query1 = "SELECT * FROM users " + 
                  "WHERE user_id= $1";
