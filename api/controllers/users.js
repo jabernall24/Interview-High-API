@@ -175,19 +175,20 @@ exports.user_by_email_password = async function(req, res) {
 	await client
 		.query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = $1::text AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
 		.then(result => {
-			if(result.rows.length == 0) {
-				return res.status(200).json([{
-					"success": false,
-					"message": "Invalid email or password"
-				}]);
-			} 
-			const response = [{
-				"success": true,
-				"message": ""
-			},
-			JSON.parse(result.rows)
-			];
-			return res.status(200).json(response);
+			// if(result.rows.length == 0) {
+			// 	return res.status(200).json([{
+			// 		"success": false,
+			// 		"message": "Invalid email or password"
+			// 	}]);
+			// } 
+			
+			// const response = [{
+			// 	"success": true,
+			// 	"message": ""
+			// },
+			// JSON.parse(result.rows)
+			// ];
+			return res.status(200).json(result.rows);
 		})
 		.catch(e => res.status(400).json(e));
 };
