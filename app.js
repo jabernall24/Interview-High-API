@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors({
-	origin: "*"
+	origin: "https://interviewhigh.com"
 }));
 
 const routes = require("./routes");

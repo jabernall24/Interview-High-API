@@ -159,8 +159,18 @@ exports.user_by_id = async function (req, res) {
 };
 
 exports.user_by_email_password = async function(req, res) {
-	const email = req.body.email.toLowerCase();
+	let email = req.body.email
 	const password = req.body.password;
+
+	if(email == undefined || password == undefined) {
+		return res.status(400).json([
+			{
+				"success": false,
+				"message": "Email or password not provided"
+			}
+		])
+	}
+	email = email.toLowerCase()
 
 	await client
 		.query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = $1::text AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
