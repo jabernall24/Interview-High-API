@@ -2,6 +2,7 @@
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
+var cors = require("cors");
 const express = require("express");
 
 const app = express();
@@ -9,6 +10,10 @@ const app = express();
 var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cors({
+	origin: "http://interviewhigh.com"
+}));
 
 const routes = require("./routes");
 
