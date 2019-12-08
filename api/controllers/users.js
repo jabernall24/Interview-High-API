@@ -182,7 +182,7 @@ exports.user_by_email_password = async function(req, res) {
 				}]);
 			} 
 
-			let rows = JSON.parse(result.rows);
+			let rows = JSON.parse(JSON.stringify(result.rows));
 
 			const response = [{
 				"success": true,
@@ -190,7 +190,8 @@ exports.user_by_email_password = async function(req, res) {
 			},
 			rows
 			];
-			return res.status(200).json(rows);
+
+			return res.status(200).json(response);
 		})
 		.catch(e => res.status(400).json(e));
 };
