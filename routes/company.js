@@ -7,6 +7,8 @@ app.post("/create" , CompanyController.create_company);
 
 app.get("/", CompanyController.get_all_companies);
 
-// app.put("/:company", CompanyController.update_company);
+app.delete("/:company", CompanyController.company_delete);
+
+app.put("/:company", CompanyController.update_company);
 
 module.exports = app;

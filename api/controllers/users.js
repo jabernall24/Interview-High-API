@@ -198,14 +198,11 @@ exports.user_login_by_email_password = async function(req, res) {
 		.query( query, [email, password])
 		.then(result => {
 			if(result.rows.length == 0) {
-				return res.status(200).json([{
+				return res.status(400).json([{
 					"success": false,
 					"message": "Invalid email or password"
 				}]);
 			} 
-
-			// let rows = JSON.parse(result.rows);
-
 			const response = [{
 				"success": true,
 				"message": "Successful login"
@@ -255,7 +252,6 @@ exports.user_update_password =  async function (req, res) {
 		});
 };
 
-
 exports.user_delete = async (req, res) => {
 	const user_id = req.params.user_id;
 	let query = "DELETE FROM users WHERE user_id=$1 RETURNING user_id";
@@ -284,3 +280,7 @@ exports.user_delete = async (req, res) => {
 		});
 
 };
+
+// exports.user_history = async (req, res) => {
+
+// }
