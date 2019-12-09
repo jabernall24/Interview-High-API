@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Start up the docker container
-docker-compose up -d
+sudo docker-compose up -d
 
 # Create DynamoDB
 aws dynamodb create-table \

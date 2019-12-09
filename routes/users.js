@@ -13,12 +13,12 @@ app.put("/:user_id", UserController.user_update);
 app.get("/:user_id", UserController.user_by_id);
 
 // Get user with email and password
-app.post("/login", UserController.user_by_email_password);
+app.post("/login", UserController.user_login_by_email_password);
 
 // change password and add it to data bases
 app.put("/:user_id/password", UserController.user_update_password);
 
-//get question history
-// app.get("/:user_id/questions", UserController.user_questions);
+// delete user 
+// app.delete("/:user_id",UserController.user_delete);
 
 module.exports = app;

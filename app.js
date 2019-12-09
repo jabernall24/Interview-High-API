@@ -21,6 +21,7 @@ app.use("/user", routes.users);
 app.use("/categories", routes.categories);
 app.use("/questions", routes.questions);
 app.use("/pointbreak", routes.pointbreak);
+app.use("/companies", routes.company);
 
 if(process.env.HOST != "localhost") {
 	// Certificate
