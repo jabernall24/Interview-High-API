@@ -19,6 +19,6 @@ app.post("/login", UserController.user_login_by_email_password);
 app.put("/:user_id/password", UserController.user_update_password);
 
 // delete user 
-// app.delete("/:user_id",UserController.user_delete);
+app.delete("/:user_id",UserController.user_delete);
 
 module.exports = app;

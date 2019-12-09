@@ -150,8 +150,6 @@ exports.user_by_id = async function (req, res) {
 		return res.status(400).json(response);
 	}
 
-	
-
 	let query1 = "SELECT * FROM users " + 
                  "WHERE user_id= $1";
     
@@ -258,20 +256,31 @@ exports.user_update_password =  async function (req, res) {
 };
 
 
-// exports.user_delete = async (req, res) => {
-// 	const user_id = req.params.user_id;
-// 	let query = "DROP user WHERE user_id=$1 RETURNING user_id";
+exports.user_delete = async (req, res) => {
+	const user_id = req.params.user_id;
+	let query = "DELETE FROM users WHERE user_id=$1 RETURNING user_id";
 	
-// 	await client
-// 		.query(query, [user_id])
-// 		.then(result => {
-// 			const response = [
-// 				{
-// 					"success": true,
-// 					"message": "Deleted successful"
-// 				}
-// 			];
+	await client
+		.query(query, [user_id])
+		.then(result => {
+			const response = [
+				{
+					"success": true,
+					"message": "Deleted successful"
+				}
+			];
+			if(result.rows.length == 0){
+				response[0]["success"] = false;
+				response[0]["message"] = "User ID does not exit";
+			}
+			else {
+				response.push(result.rows);
+			}
 
-// 		})
-// 		.catch(e => { res.status(400).json(e)});
-// };
+			return res.status(200).json(response);
+		})
+		.catch(e => {
+			res.status(400).json(e);
+		});
+
+};
