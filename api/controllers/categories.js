@@ -108,7 +108,7 @@ exports.category_create = async (req , res) => {
 	const subcategory = req.body.subcategory;
 
 	if(category == undefined || category == "" || subcategory == undefined || subcategory == ""){
-		return res.status(400).json({"success": false, "message": "No category or subcategory defined"})
+		return res.status(400).json({"success": false, "message": "No category or subcategory defined"});
 	}
 	const query = "INSERT INTO category(category, subcategory) values($1::text, $2::text) RETURNING category , subcategory" ;
 
@@ -122,7 +122,7 @@ exports.category_create = async (req , res) => {
 					"message": "Category Information successfully added"
 				},
 				result.rows
-			]
+			];
 			return res.status(200).json(response);
 		})
 		.catch(e => res.status(400).json(e));
@@ -134,7 +134,7 @@ exports.category_delete = async (req , res) => {
 	const subcategory = req.body.subcategory;
 
 	if(category == undefined || category == "" || subcategory == undefined || subcategory == ""){
-		return res.status(400).json({"success": false, "message": "No category or subcategory defined"})
+		return res.status(400).json({"success": false, "message": "No category or subcategory defined"});
 	}
 
 	const query = "DELETE FROM category WHERE category = $1::text "
@@ -144,20 +144,20 @@ exports.category_delete = async (req , res) => {
 	await client 
 		.query(query,[category, subcategory])
 		.then(result => {
-			response = [
+			const response = [
 				{
 					"success": true,
 					"massage": "Successfully deleted"
 				}
-			]
+			];
 			if(result.rows.length == 0)
 			{
 				response[0]["success"] = false;
-				response[0]["massage"] = "Unsuccessfully deleted No subcategory"
+				response[0]["massage"] = "Unsuccessfully deleted No subcategory";
 				return res.status(400).json(response);
 			}
 			else {
-				response.push(result.rows)
+				response.push(result.rows);
 				return res.status(200).json(response);
 			}
 		})

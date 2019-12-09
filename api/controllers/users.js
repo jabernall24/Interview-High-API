@@ -1,5 +1,5 @@
 const client = require("../../db/db").client;
-const dynamoDB = require("../../db/db").dynamoDB;
+// const dynamoDB = require("../../db/db").dynamoDB;
 const validator = require("email-validator");
 
 exports.user_create = async (req, res) => {
