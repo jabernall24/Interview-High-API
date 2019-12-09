@@ -35,10 +35,18 @@ exports.user_create = async (req, res) => {
 };
 
 exports.user_update = async function(req, res) {
-	const email = req.body.email.toLsowerCase();
+	let email = req.body.email;
 	const password = req.body.password;
 
 	let i = 1;
+
+	if(email == undefined || password == undefined){
+		return res.status(400).json({
+			"success": false,
+			"message": "Email or Password is not defined"
+		});
+	}
+	email = email.toLowerCase();
 
 	let queryString = "UPDATE users SET ";
 	let queryParams = [];
