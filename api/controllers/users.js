@@ -286,7 +286,7 @@ exports.user_question_history = async (req, res) => {
 	
 	let user_id = req.params.user_id;
 	let secret_key = req.body.secret_key;
-	let limit  = req.body.limit;
+	// let limit  = req.body.limit;
 
 	if(process.env.InterviewHighSecretKey != secret_key) {
 		return res.status(400).json({
@@ -307,7 +307,7 @@ exports.user_question_history = async (req, res) => {
 		}
 		try{
 			let questions = data["Items"][0]["questions"];
-			return res.status(200).json(questions);
+			return res.status(200).json( {"success": true,  questions});
 		}catch(err){
 			return res.status(400).json({
 				"message": "Nothing here bro"
