@@ -295,11 +295,11 @@ exports.user_question_history = async (req, res) => {
 	}
 
 	var params = {
-		TableName: "Interview_High_Questions_History",
+		TableName: "Interview_High_User_Questions_History",
 		KeyConditionExpression: "pk = :pk",
 		ExpressionAttributeValues: {
 			":pk": user_id 
-		}
+		},
 	};
 	dynamoDB.query(params, (err, data) => {
 		if(err){
