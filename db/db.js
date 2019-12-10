@@ -2,7 +2,9 @@
 var AWS = require("aws-sdk");
 
 AWS.config.update({accessKeyId: process.env.InterviewHighDynamoDBAccessKeyId, secretAccessKey: process.env.InterviewHighDynamoDBSecretAccessKey, region: process.env.InterviewHighDynamoDBRegion});
-var dynamoDB = new AWS.DynamoDB.DocumentClient({apiVersion: "2012-08-10"});
+const dynamoDB = new AWS.DynamoDB.DocumentClient({apiVersion: "2012-08-10"});
+
+const s3 = new AWS.S3({apiVersion: "2006-03-01"});
 
 const { Client } = require("pg");
 
@@ -18,5 +20,6 @@ client.connect(err => {
 
 module.exports = {
 	client,
-	dynamoDB
+	dynamoDB,
+	s3
 };
