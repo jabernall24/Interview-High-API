@@ -68,7 +68,7 @@ exports.get_new_question_for_user = function(req, res) {
 		client
 			.query("SELECT question_id FROM question WHERE question_id NOT IN (" + placeholders + ") ORDER BY random() LIMIT 1;", questions)
 			.then(result => {
-				return res.status(200).json(result);
+				return res.status(200).json(result.rows);
 			})
 			.catch(e => {
 				return res.status(400).json(e);
