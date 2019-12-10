@@ -2,6 +2,6 @@
 // const app = express();
 // const PointbreakController = require("../api/controllers/pointbreak");
 
-// app.get("/pointbreak" , PointbreakController.mikes_endpoint);
+// app.get("/pointbreak" , PointbreakController.pointbreak);
 
 // module.exports = app;

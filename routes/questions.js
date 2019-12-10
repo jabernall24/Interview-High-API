@@ -11,4 +11,6 @@ app.delete("/:question_id", QuestionController.delete_question);
 
 app.put("/:question_id", QuestionController.update_question);
 
+app.get("/:question_id", QuestionController.get_full_question);
+
 module.exports = app;
