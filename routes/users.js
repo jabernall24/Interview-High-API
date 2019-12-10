@@ -24,4 +24,6 @@ app.delete("/:user_id",UserController.user_delete);
 //get users history questions
 app.get("/:user_id/questions", UserController.user_question_history);
 
+app.post("/:user_id/:question_id", UserController.check_user_solution);
+
 module.exports = app;
