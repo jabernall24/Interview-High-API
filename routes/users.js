@@ -22,6 +22,6 @@ app.put("/:user_id/password", UserController.user_update_password);
 app.delete("/:user_id",UserController.user_delete);
 
 //get users history questions
-// app.get("/:user_id/questions", UserController.user_history);
+app.get("/:user_id/questions", UserController.user_question_history);
 
 module.exports = app;
