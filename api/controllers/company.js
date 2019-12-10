@@ -89,13 +89,12 @@ exports.company_delete = async (req, res) => {
 exports.update_company = async (req, res) => {
 	let company = req.params.company;
 	let newName = req.body.company;
-	const query = "UPDATE company SET company=$1::text "
-				+ "WHERE company=$2 RETURNING company";
 
-	if(newName == undefined || newName == "")
-	{
+	if(newName == undefined || newName == undefined) {
 		return res.status(400).json({"success":false ,"message": "No new name provided"});
 	}
+
+	const query = "UPDATE company SET company=$1::text WHERE company=$2::text;";
 
 	await client
 		.query(query, [newName, company])
