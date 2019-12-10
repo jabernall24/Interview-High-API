@@ -102,3 +102,81 @@ exports.get_all_subcategories = async function (req, res){
 		});
 
 };
+
+exports.category_create = async (req , res) => {
+	const category = req.body.category;
+	const subcategory = req.body.subcategory;
+
+	if(category == undefined || category == "" || subcategory == undefined || subcategory == ""){
+		return res.status(400).json({"success": false, "message": "No category or subcategory defined"});
+	}
+	const query = "INSERT INTO category(category, subcategory) values($1::text, $2::text) RETURNING category , subcategory" ;
+
+	await client 
+		.query(query, [category,subcategory])
+		.then( (result) => {
+
+			const response = [
+				{
+					"success": true, 
+					"message": "Category Information successfully added"
+				},
+				result.rows
+			];
+			return res.status(200).json(response);
+		})
+		.catch(e => res.status(400).json(e));
+
+};
+
+exports.category_delete = async (req , res) => {
+	const category = req.params.category;
+	const subcategory = req.body.subcategory;
+
+	if(category == undefined || category == "" || subcategory == undefined || subcategory == ""){
+		return res.status(400).json({"success": false, "message": "No category or subcategory defined"});
+	}
+
+	const query = "DELETE FROM category WHERE category = $1::text "
+				+"AND subcategory = $2::text "
+				+"RETURNING category, subcategory";
+
+	await client 
+		.query(query,[category, subcategory])
+		.then(result => {
+			const response = [
+				{
+					"success": true,
+					"massage": "Successfully deleted"
+				}
+			];
+			if(result.rows.length == 0)
+			{
+				response[0]["success"] = false;
+				response[0]["massage"] = "Unsuccessfully deleted No subcategory";
+				return res.status(400).json(response);
+			}
+			else {
+				response.push(result.rows);
+				return res.status(200).json(response);
+			}
+		})
+		.catch(e => res.status(400).json(e));
+
+};
+
+
+// exports.category_update = async (req ,res) => {
+// 	const category = req.body.category;
+// 	const subcategory = req.body.subcategory;
+
+// 	if(category == undefined || category == "" || subcategory == undefined || subcategory == ""){
+// 		return res.status(400).json({"success": false, "message": "No category or subcategory defined"})
+// 	}
+// 	const query = "UPDATE category set"
+// 	await client
+// 		.query()
+// 		.then()
+// 		.catch();
+
+// };

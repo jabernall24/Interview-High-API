@@ -4,6 +4,7 @@ DROP TABLE question;
 DROP TABLE company;
 DROP TABLE users;
 DROP TABLE category;
+DROP EXTENSION pgcrypto;
 
 CREATE EXTENSION pgcrypto;
 
@@ -35,9 +36,10 @@ CREATE TABLE question(
     category TEXT NOT NULL,
     subcategory TEXT NOT NULL,
     difficulty INTEGER CHECK(difficulty >= 1 AND difficulty <= 5),
-    company TEXT NOT NULL REFERENCES company(company) ON DELETE CASCADE,
+    company TEXT NOT NULL,
     rating DECIMAL,
     rating_counter INTEGER,
+    CONSTRAINT question_company_fkey FOREIGN KEY (company) REFERENCES company(company) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (category, subcategory) REFERENCES category(category, subcategory) ON DELETE CASCADE,
     PRIMARY KEY (question_id)
 );

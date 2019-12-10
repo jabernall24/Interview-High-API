@@ -4,14 +4,24 @@ const dynamoDB = require("../../db/db").dynamoDB;
 exports.create_new_question = async function(req, res) {
 
 	let title = req.body.title;
-	let category = req.body.category.toLowerCase();
-	let subcategory = req.body.subcategory.toLowerCase();
+	let category = req.body.category;//
+	let subcategory = req.body.subcategory;//
 	let difficulty = req.body.difficulty;
 	let company = req.body.company;
 	let rating = 0;
 	let rating_counter = 0;
 	let question = req.body.question;
 	let answer = req.body.answer;
+
+	if(title == undefined || title == ""
+	|| category == undefined || category == ""
+	|| subcategory == undefined || subcategory == ""
+	|| difficulty == undefined || difficulty == ""
+	|| company == undefined || company == "" 
+	|| question== undefined || question== ""
+	|| answer == undefined || answer == ""){
+		return res.status(400).json({"success": false, "message": "Information missing need all"});
+	}
 
 	let queryString = "INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) values($1::text, $2::text, $3::text, $4::int, $5::text, $6::int, $7::int) RETURNING *;";
 	let queryValues = [title, category, subcategory, difficulty, company, rating, rating_counter];
@@ -62,6 +72,7 @@ exports.create_new_question = async function(req, res) {
 
 					return res.status(400).json(response);
 				} else {
+
 					const response = [
 						{
 							"success": true,

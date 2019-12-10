@@ -1,7 +1,8 @@
 const client = require("../../db/db").client;
+// const dynamoDB = require("../../db/db").dynamoDB;
 const validator = require("email-validator");
 
-exports.user_create = async function(req, res) {
+exports.user_create = async (req, res) => {
 	const email = req.body.email.toLowerCase();
 	const password = req.body.password;
 	const is_subscribed = req.body.is_subscribed;
@@ -35,10 +36,18 @@ exports.user_create = async function(req, res) {
 };
 
 exports.user_update = async function(req, res) {
-	const email = req.body.email.toLowerCase();
+	let email = req.body.email;
 	const password = req.body.password;
 
 	let i = 1;
+
+	if(email == undefined || password == undefined){
+		return res.status(400).json({
+			"success": false,
+			"message": "Email or Password is not defined"
+		});
+	}
+	email = email.toLowerCase();
 
 	let queryString = "UPDATE users SET ";
 	let queryParams = [];
@@ -69,7 +78,7 @@ exports.user_update = async function(req, res) {
 		queryString += "(";
 	} else if(queryParams.length == 0) {
 		const response = {
-			"statusCode": 400,
+			"success": false,
 			"message": "nothing to change"
 		};
 		return res.status(400).json(response);
@@ -108,10 +117,10 @@ exports.user_update = async function(req, res) {
 	await client
 		.query(queryString, vals)
 		.then(result => {
-			const response = [{ "success": true, "message": "" }];
+			let response = [{ "success": true, "message": "" }];
 			if(result.rows.length == 0) {
-				response["success"] = false;
-				response["message"] = "Invalid credentials";
+				let response = [{ "success": false, "message": "Invalid credentials" }];
+				return res.status(400).json(response);
 			} else {
 				response.push(result.rows[0]);
 			}
@@ -128,7 +137,19 @@ exports.user_update = async function(req, res) {
 
 exports.user_by_id = async function (req, res) {
 	const userId = req.params.user_id;
-	const emailComing = req.body.email.toLowerCase();
+	const emailComing = req.body.email;
+
+	if(emailComing === undefined)
+	{
+
+		const response = [
+			{
+				"success": false,
+				"message": "Email was not provided"
+			}
+		];
+		return res.status(400).json(response);
+	}
 
 	let query1 = "SELECT * FROM users " + 
                  "WHERE user_id= $1";
@@ -158,8 +179,8 @@ exports.user_by_id = async function (req, res) {
 		});
 };
 
-exports.user_by_email_password = async function(req, res) {
-	let email = req.body.email;
+exports.user_login_by_email_password = async function(req, res) {
+	let email = req.body.email.toLowerCase();
 	const password = req.body.password;
 
 	if(email == undefined || password == undefined) {
@@ -171,26 +192,24 @@ exports.user_by_email_password = async function(req, res) {
 		]);
 	}
 	email = email.toLowerCase();
+	let query  = "SELECT user_id, email, is_subscribed, category, subcategories "
+				+ "FROM users WHERE email = $1::text AND pwd_hash = crypt($2::text, pwd_hash)";
 
 	await client
-		.query("SELECT user_id, email, is_subscribed, category, subcategories FROM users WHERE email = $1::text AND pwd_hash = crypt($2::text, pwd_hash)", [email, password])
+		.query( query, [email, password])
 		.then(result => {
 			if(result.rows.length == 0) {
-				return res.status(200).json([{
+				return res.status(400).json([{
 					"success": false,
 					"message": "Invalid email or password"
 				}]);
 			} 
-
-			let rows = JSON.parse(JSON.stringify(result.rows));
-
 			const response = [{
 				"success": true,
-				"message": ""
+				"message": "Successful login"
 			},
-			rows
+			result.rows[0]
 			];
-
 			return res.status(200).json(response);
 		})
 		.catch(e => res.status(400).json(e));
@@ -234,6 +253,36 @@ exports.user_update_password =  async function (req, res) {
 		});
 };
 
-// exports.user_questions = async function (res, req) {
-    
-// };
+exports.user_delete = async (req, res) => {
+	const user_id = req.params.user_id;
+	let query = "DELETE FROM users WHERE user_id=$1 RETURNING user_id";
+	
+	await client
+		.query(query, [user_id])
+		.then(result => {
+			const response = [
+				{
+					"success": true,
+					"message": "Deleted successful"
+				}
+			];
+			if(result.rows.length == 0){
+				response[0]["success"] = false;
+				response[0]["message"] = "User ID does not exit";
+			}
+			else {
+				response.push(result.rows);
+			}
+
+			return res.status(200).json(response);
+		})
+		.catch(e => {
+			res.status(400).json(e);
+		});
+
+};
+
+// exports.user_history = async (req, res) => {
+
+// }
+
