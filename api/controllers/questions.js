@@ -126,3 +126,36 @@ exports.get_questions = async function(req, res) {
 			return res.status(400).json(e);
 		});
 };
+
+exports.delete_question = async function(req, res) {
+	let question_id = req.params.question_id;
+
+	let queryString = "DELETE FROM question WHERE question_id=$1::int RETURNING question_id;";
+	let values = [question_id];
+
+	await client
+		.query(queryString, values)
+		.then(result => {
+			if(result.rows.length == 0) {
+				return res.status(400).json([
+					{
+						"success": false,
+						"message": "Question not found"
+					}
+				]);
+			}
+
+			let response = [
+				{
+					"success": true,
+					"message": ""
+				},
+				result.rows[0]
+			];
+
+			return res.status(200).json(response);
+		})
+		.catch(e => {
+			return res.status(400).json(e);
+		});
+};
