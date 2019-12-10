@@ -316,3 +316,8 @@ exports.user_question_history = async (req, res) => {
 	});
 };
 
+exports.check_user_solution = async function(req, res) {
+	return res.status(200).json([
+		true, false, true
+	]);
+};
