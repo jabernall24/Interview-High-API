@@ -105,7 +105,7 @@ exports.create_new_question = async function(req, res) {
 exports.get_questions = async function(req, res) {
 	let company = req.params.company;
 
-	let queryString = "SELECT * FROM question WHERE company = $1::text;"
+	let queryString = "SELECT * FROM question WHERE company = $1::text;";
 	let values = [company];
 
 	await client
@@ -118,11 +118,11 @@ exports.get_questions = async function(req, res) {
 					"message": ""
 				},
 				result.rows
-			]
+			];
 
 			return res.status(200).json(response);
 		})
 		.catch(e => {
 			return res.status(400).json(e);
 		});
-}
+};
