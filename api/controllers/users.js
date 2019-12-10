@@ -296,7 +296,7 @@ exports.user_question_history = async (req, res) => {
 
 	var params = {
 		TableName: "Interview_High_Questions_History",
-		KeyConditionExpression: "pk = pk",
+		KeyConditionExpression: "pk = :pk",
 		ExpressionAttributeValues: {
 			":pk": user_id 
 		},
