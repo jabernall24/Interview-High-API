@@ -4,12 +4,14 @@ const http = require("http");
 const https = require("https");
 var cors = require("cors");
 const express = require("express");
+const fileUpload = require("express-fileupload");
 
 const app = express();
 
 var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload({ useTempFiles : true, tempFileDir : "/tmp/" }));
 
 app.use(cors({
 	origin: "https://interviewhigh.com"

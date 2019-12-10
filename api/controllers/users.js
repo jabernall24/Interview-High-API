@@ -1,5 +1,6 @@
 const client = require("../../db/db").client;
 const dynamoDB = require("../../db/db").dynamoDB;
+const s3 = require("../../db/db").s3;
 const validator = require("email-validator");
 
 exports.user_create = async (req, res) => {
@@ -317,7 +318,32 @@ exports.user_question_history = async (req, res) => {
 };
 
 exports.check_user_solution = async function(req, res) {
-	return res.status(200).json([
-		true, false, true
-	]);
+
+	const startFile = req.files.starter;
+
+	const BUCKET_NAME = "interview-high";
+
+	const fs = require("fs");
+	var content;
+	fs.readFile(startFile.tempFilePath, function read(err, data) {
+		if (err) {
+			throw err;
+		}
+		content = data;
+
+		const params = {
+			Bucket: BUCKET_NAME,
+			Key: "cat.cpp", // File name you want to save as in S3
+			Body: content
+		};
+	
+		s3.upload(params, function(err, data) {
+			if (err) {
+				return res.status(400).json(err);
+			}
+			return res.status(200).json(data);
+		});
+
+	});
+
 };
