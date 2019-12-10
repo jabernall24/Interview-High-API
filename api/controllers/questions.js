@@ -73,6 +73,7 @@ exports.create_new_question = async function(req, res) {
 					return res.status(400).json(response);
 				} else {
 					console.log("Entered");
+
 					const response = [
 						{
 							"success": true,

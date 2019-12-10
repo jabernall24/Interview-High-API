@@ -78,7 +78,7 @@ exports.user_update = async function(req, res) {
 		queryString += "(";
 	} else if(queryParams.length == 0) {
 		const response = {
-			"statusCode": 400,
+			"success": false,
 			"message": "nothing to change"
 		};
 		return res.status(400).json(response);
@@ -117,10 +117,10 @@ exports.user_update = async function(req, res) {
 	await client
 		.query(queryString, vals)
 		.then(result => {
-			const response = [{ "success": true, "message": "" }];
+			let response = [{ "success": true, "message": "" }];
 			if(result.rows.length == 0) {
-				response["success"] = false;
-				response["message"] = "Invalid credentials";
+				let response = [{ "success": false, "message": "Invalid credentials" }];
+				return res.status(400).json(response);
 			} else {
 				response.push(result.rows[0]);
 			}
