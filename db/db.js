@@ -16,6 +16,16 @@ client.connect(err => {
 	}
 });
 
+// dynamoDB.connect(err => {
+// 	if(err)
+// 	{
+// 		console.log("connection error Dynamodb", err.stack)
+// 	}
+// 	else{
+// 		console.log("connected Dynamodb");
+// 	}
+// });
+
 module.exports = {
 	client,
 	dynamoDB

@@ -11,7 +11,12 @@ let getlistCompanies =  (listObj)  => {
 exports.create_company = async (req ,res) => {
 	const company = req.body.company;
 	let query  = "INSERT INTO company(company) values($1::text) "
-                +"RETURNING company";
+				+"RETURNING company";
+				
+	if(company == undefined || company == "")
+	{
+		return res.status(400).json({"success": false, "message": "Company not provided"})
+	}
 
 	await client 
 		.query(query , [company])
@@ -109,7 +114,21 @@ exports.update_company = async (req, res) => {
 			];
 			return res.status(200).json(response);
 		})
-		.catch(e => res.status(400).json(e));
+		.catch(e => 
+			{
+				let response = [
+					{
+						"success": false, 
+						"message" : e
+					}
+				];
+				if(e['code'] == 23505){
+					response[0]["message"] = "Name already exist try different"
+					response[0]["error"] = e;
+				}
+
+				return res.status(400).json(response);
+			});
 
 };
 

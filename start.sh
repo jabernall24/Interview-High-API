@@ -5,7 +5,7 @@ sudo docker-compose up -d
 
 # Create DynamoDB
 aws dynamodb create-table \
-    --table-name test \
+    --table-name testdb \
     --key-schema '[{"AttributeName": "pk","KeyType": "HASH"},{"AttributeName": "sk","KeyType": "RANGE"}]' \
     --attribute-definitions '[{"AttributeName": "pk", "AttributeType": "N"}, {"AttributeName": "sk", "AttributeType": "S"}]' \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \

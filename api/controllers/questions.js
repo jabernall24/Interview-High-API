@@ -3,6 +3,7 @@ const dynamoDB = require("../../db/db").dynamoDB;
 
 exports.create_new_question = async function(req, res) {
 
+	console.log("I am in")
 	let title = req.body.title;
 	let category = req.body.category;//
 	let subcategory = req.body.subcategory;//
@@ -20,9 +21,8 @@ exports.create_new_question = async function(req, res) {
 	|| company == undefined || company == "" 
 	|| question== undefined || question== ""
 	|| answer == undefined || answer == ""){
-		return res.status(400).json({"success": false, "message": "Information missing need all"})
+		return res.status(400).json({"success": false, "message": "Information missing need all"});
 	}
-
 	let queryString = "INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) values($1::text, $2::text, $3::text, $4::int, $5::text, $6::int, $7::int) RETURNING *;";
 	let queryValues = [title, category, subcategory, difficulty, company, rating, rating_counter];
 
@@ -72,7 +72,7 @@ exports.create_new_question = async function(req, res) {
 
 					return res.status(400).json(response);
 				} else {
-					console.log("Entered")
+					console.log("Entered");
 					const response = [
 						{
 							"success": true,
