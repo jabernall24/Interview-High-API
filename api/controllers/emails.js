@@ -52,7 +52,14 @@ exports.get_new_question_for_user = function(req, res) {
 			return res.status(400).json(err);
 		}
 
-		let questions = data["Items"][0]["questions"];
+		let questions = [];
+		try {
+			questions = data["Items"][0]["questions"];
+		} catch(err) {
+			return res.status(400).json({
+				"message": "Nothing here bro"
+			});
+		}
 
 		const placeholders = questions.map(function(name,i) { 
 			return "$"+(i+1); 
