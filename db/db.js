@@ -2,7 +2,7 @@
 var AWS = require("aws-sdk");
 
 AWS.config.update({accessKeyId: process.env.InterviewHighDynamoDBAccessKeyId, secretAccessKey: process.env.InterviewHighDynamoDBSecretAccessKey, region: process.env.InterviewHighDynamoDBRegion});
-var dynamoDB = new AWS.DynamoDB({apiVersion: "2012-08-10"});
+var dynamoDB = new AWS.DynamoDB.DocumentClient({apiVersion: "2012-08-10"});
 
 const { Client } = require("pg");
 

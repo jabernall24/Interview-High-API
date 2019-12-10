@@ -4,8 +4,8 @@ const dynamoDB = require("../../db/db").dynamoDB;
 exports.create_new_question = async function(req, res) {
 
 	let title = req.body.title;
-	let category = req.body.category;//
-	let subcategory = req.body.subcategory;//
+	let category = req.body.category;
+	let subcategory = req.body.subcategory;
 	let difficulty = req.body.difficulty;
 	let company = req.body.company;
 	let rating = 0;
