@@ -159,3 +159,90 @@ exports.delete_question = async function(req, res) {
 			return res.status(400).json(e);
 		});
 };
+
+exports.update_question = async function(req, res) {
+
+	let question_id = req.params.question_id;
+	let title = req.body.title;
+	let category = req.body.category;
+	let subcategory = req.body.subcategory;
+	let difficulty = req.body.difficulty;
+	let company = req.body.company;
+
+	if(title == undefined && category == undefined && subcategory == undefined && difficulty == undefined && company == undefined) {
+		return res.status(400).json([
+			{
+				"success": false,
+				"message": "Nothing to update"
+			}
+		]);
+	}
+
+	let queryString = "UPDATE question SET ";
+	let queryParams = [];
+	let queryVals = [];
+	let vals = [];
+	let i = 1;
+
+	if(title != undefined && title != "") {
+		queryParams.push("title");
+		queryVals.push("$" + i + "::text");
+		vals.push(title);
+		i += 1;
+	}
+
+	if(category != undefined && category != "") {
+		queryParams.push("category");
+		queryVals.push("$" + i + "::text");
+		vals.push(category);
+		i += 1;
+	}
+
+	if(subcategory != undefined && subcategory != "") {
+		queryParams.push("subcategory");
+		queryVals.push("$" + i + "::text");
+		vals.push(subcategory);
+		i += 1;
+	}
+	
+	if(difficulty != undefined) {
+		queryParams.push("difficulty");
+		queryVals.push("$" + i + "::int");
+		vals.push(difficulty);
+		i += 1;
+	}
+
+	if(company != undefined && company != "") {
+		queryParams.push("company");
+		queryVals.push("$" + i + "::text");
+		vals.push(company);
+		i += 1;
+	}
+	
+	for(let j = 0; j < queryParams.length; j++) {
+		queryString += queryParams[j] + " = " + queryVals[j];
+
+		if(j+1 != queryParams.length) {
+			queryString += ", ";
+		} 
+	}
+
+	vals.push(question_id);
+	queryString += " WHERE question_id = $" + i + "::int RETURNING question_id;";
+
+	await client
+		.query(queryString, vals)
+		.then(result => {
+			let response = [
+				{
+					"success": true,
+					"message": ""
+				},
+				result.rows[0]
+			];
+			return res.status(200).json(response);
+		})
+		.catch(e => {
+			return res.status(400).json(e);
+		});
+};

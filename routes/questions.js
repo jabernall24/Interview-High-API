@@ -9,4 +9,6 @@ app.get("/:company", QuestionController.get_questions);
 
 app.delete("/:question_id", QuestionController.delete_question);
 
+app.put("/:question_id", QuestionController.update_question);
+
 module.exports = app;
