@@ -68,8 +68,15 @@ exports.get_new_question_for_user = function(req, res) {
 			return "$"+(i+1); 
 		}).join(",");
 
+		let queryString = "";
+		if(questions.length != 0) {
+			queryString = "SELECT question_id FROM question WHERE question_id NOT IN (" + placeholders + ") ORDER BY random() LIMIT 1;";
+		} else {
+			queryString = "SELECT question_id FROM question ORDER BY random() LIMIT 1;";
+		}
+
 		client
-			.query("SELECT question_id FROM question WHERE question_id NOT IN (" + placeholders + ") ORDER BY random() LIMIT 1;", questions)
+			.query(queryString, questions)
 			.then(result => {
 				return res.status(200).json(result.rows);
 			})
