@@ -15,14 +15,6 @@
 //     let question_id = req.body.questions_id;
 //     let user_code = req.body.user_code;
 
-//     var params = {
-// 		TableName : "Interview_High_Questions",
-// 		KeyConditionExpression: "pk = :pk",       
-// 		ExpressionAttributeValues: {
-//             ":pk": question_id
-// 		},
-//     };
-//     var query_results;
 
 //     dynamoDB.query(params, (err, data)=>{
 //         if(err){

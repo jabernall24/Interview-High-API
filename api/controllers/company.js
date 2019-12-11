@@ -111,4 +111,3 @@ exports.update_company = async (req, res) => {
 		.catch(e => res.status(400).json(e));
 
 };
-

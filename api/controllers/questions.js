@@ -1,17 +1,7 @@
 const client = require("../../db/db").client;
+const dynamoDB = require("../../db/db").dynamoDB;
 const s3 = require("../../db/db").s3;
-
-function readFile(filename, cb) {		
-	const fs = require("fs");
-	fs.readFile(filename, function read(err, data) {
-		if (err) {
-			cb(err);
-		}
-		
-		cb(data);
-	});
-}
-
+const fs = require('fs');
 exports.create_new_question = async function(req, res) {
 
 	let title = req.body.title;
@@ -21,92 +11,84 @@ exports.create_new_question = async function(req, res) {
 	let company = req.body.company;
 	let rating = 0;
 	let rating_counter = 0;
+	let question = req.body.question;
+	let answer = req.body.answer;
 
 	if(title == undefined || title == ""
 	|| category == undefined || category == ""
 	|| subcategory == undefined || subcategory == ""
 	|| difficulty == undefined || difficulty == ""
-	|| company == undefined || company == ""){
+	|| company == undefined || company == "" 
+	|| question== undefined || question== ""
+	|| answer == undefined || answer == ""){
 		return res.status(400).json({"success": false, "message": "Information missing need all"});
 	}
 
 	let queryString = "INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) values($1::text, $2::text, $3::text, $4::int, $5::text, $6::int, $7::int) RETURNING *;";
 	let queryValues = [title, category, subcategory, difficulty, company, rating, rating_counter];
 
-	await client
+	client
 		.query(queryString, queryValues)
 		.then(result => {
+			let field = result.rows[0];
+			console.log(field.question_id);
 
-			const starterFilePath = req.files.starter.tempFilePath;
-			const questionFilePath = req.files.question.tempFilePath;
-			const answerFilePath = req.files.answer.tempFilePath;
-			const testFilePath = req.files.tests.tempFilePath;
-
-			const BUCKET_NAME = "interview-high";
-
-			readFile(starterFilePath, function(starterData) {
-				readFile(questionFilePath, function(questionData) {
-					readFile(answerFilePath, function(answerData) {
-						readFile(testFilePath, function(testsData) {
-							let params = {
-								Bucket: BUCKET_NAME,
-								Key: "Questions/" + result.rows[0]["question_id"] + "/starter.cpp", // File name you want to save as in S3
-								Body: starterData
-							};
-						
-							s3.upload(params, function(err) {
-								if (err) {
-									return res.status(400).json(err);
+			var params = {
+				RequestItems: {
+					"Interview-High-Questions": [
+						{
+							PutRequest: {
+								Item: {
+									"pk": { "N": field.question_id.toString() },
+									"sk": { "S": "Q" },
+									"Question": { "L": question.map(x => { return { "S": x.toString() };}) }
 								}
-							});
-
-							params = {
-								Bucket: BUCKET_NAME,
-								Key: "Questions/" + result.rows[0]["question_id"] + "/question.txt", // File name you want to save as in S3
-								Body: questionData
-							};
-
-							s3.upload(params, function(err) {
-								if (err) {
-									return res.status(400).json(err);
+							}
+						},
+						{
+							PutRequest: {
+								Item: {
+									"pk": { "N": field.question_id.toString() },
+									"sk": { "S": "A" },
+									"Answer": { "L": answer.map(x => { return { "S": x.toString() };}) }
 								}
-							});
+							}
+						}
+					]
+				}
+			};
 
+			dynamoDB.batchWriteItem(params, function(err, data) {
+				console.log(data);
+				if (err) {
+					const response = [
+						{
+							"success": false,
+							"message": err
+						},
+						{
+							"question_id": null
+						}
+					];
 
-							params = {
-								Bucket: BUCKET_NAME,
-								Key: "Questions/" + result.rows[0]["question_id"] + "/answer.cpp", // File name you want to save as in S3
-								Body: answerData
-							};
+					return res.status(400).json(response);
+				} else {
 
-							s3.upload(params, function(err) {
-								if (err) {
-									return res.status(400).json(err);
-								}
-							});
+					const response = [
+						{
+							"success": true,
+							"message": ""
+						},
+						{
+							"question_id": field.question_id
+						}
+					];
 
-
-							params = {
-								Bucket: BUCKET_NAME,
-								Key: "Questions/" + result.rows[0]["question_id"] + "/tests.cpp", // File name you want to save as in S3
-								Body: testsData
-							};
-
-							s3.upload(params, function(err) {
-								if (err) {
-									return res.status(400).json(err);
-								}
-								return res.status(200).json({
-									"question_id": result.rows[0]["question_id"]
-								});
-							});				
-						});
-					});
-				});
+					return res.status(200).json(response);
+				}
 			});
 		})
 		.catch(e => {
-			console.log(e);
 			const response = [
 				{
 					"success": false,
@@ -267,35 +249,138 @@ exports.update_question = async function(req, res) {
 };
 
 exports.get_full_question = async (req, res) => {
-	let secret_key = req.body.secret_key;
 	let question_id = req.params.question_id;
-	
-	if(process.env.InterviewHighSecretKey != secret_key) {
-		return res.status(400).json({
-			"message": "Nothing here bro"
-		});
-	}
+	// var stringFiles = [];
+	let header = {"success": false}
+	let body = [] 
 
-	var params = {
-		TableName : "Interview_High_Questions",
-		KeyConditionExpression: "pk = :pk",       
-		ExpressionAttributeValues: {
-			":pk": question_id
-		},
+	let answer = "Questions/" + question_id + "/answer.cpp"; 
+	let starter = "Questions/" + question_id + "/starter.cpp";
+	let question = "Questions/" + question_id + "/question.txt";
+
+	let paramAnswer = {
+		Bucket: 'interview-high',
+		Key: starter
 	};
 
-	dynamoDB.query(params, (err, data) =>{
-		if (err) {
-			return res.status(400).json(err);
-		}
-		try {
-			let questions = data["Items"][0];
-			return res.status(200).json(questions)
-		} catch(err) {
-			return res.status(400).json({
-				"message": "Nothing here bro"
-			});
-		}
-	});
+	let paramStarter = {
+		Bucket: 'interview-high',
+		Key: answer
+	};
+	let paramQuestions = {
+		Bucket: 'interview-high',
+		Key: question
+	};
 
-}
+	await s3.getObject(paramAnswer).promise()
+		.then((resp)=>{
+			header["success"] = true;
+	 		body.push(resp.Body.toString());
+		})
+		.catch((error)=>{
+			return res.status(400).json(err);
+		})
+
+	await s3.getObject(paramQuestions).promise()
+		.then((resp)=>{
+			header["success"] = true;
+	 		body.push(resp.Body.toString());
+		})
+		.catch((error)=>{
+			return res.status(400).json(err);
+		})
+
+	await s3.getObject(paramStarter).promise()
+		.then((resp)=>{
+			header["success"] = true;
+	 		body.push(resp.Body.toString());
+		})
+		.catch((error)=>{
+			return res.status(400).json(err);
+		})
+
+
+
+	// await s3.getObject(paramAnswer, (err, data) =>{
+	// 	if (err) {
+	// 		return res.status(400).json(err);
+	// 	}
+	// 	try {
+	// 		// fs.writeFileSync(filepath, data.Body.toString())
+	// 		// let response = [
+	// 		// 	{
+	// 		// 		"success": true,
+	// 		// 		"message": "Answer"
+	// 		// 	},
+	// 		// 	data.Body.toString()
+	// 		// ];
+	// 		console.log(data.Body.toString())
+	// 		header["success"] = true;
+	// 		body.push(data.Body.toString());
+	// 		// return res.status(200).json(response);
+	// 	} catch(err) {
+	// 		return res.status(400).json({
+	// 			"message": "Nothing here bro 12345"
+	// 		});
+
+	return res.status(200).json([header, body]);
+
+};
+
+// [
+//     {
+//         "Key": "/questions/19/starter.cpp",
+//         "LastModified": "2019-12-10T10:24:56.000Z",
+//         "ETag": "\"db698e6202a428f255d49fb146371805\"",
+//         "Size": 137,
+//         "StorageClass": "STANDARD",
+//         "Owner": {
+//             "DisplayName": "jabernall",
+//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
+//         }
+//     },
+//     {
+//         "Key": "Questions/8/answer.cpp",
+//         "LastModified": "2019-12-10T22:02:23.000Z",
+//         "ETag": "\"13340b37c5fcff07b4405b8731f3bf62\"",
+//         "Size": 164,
+//         "StorageClass": "STANDARD",
+//         "Owner": {
+//             "DisplayName": "jabernall",
+//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
+//         }
+//     },
+//     {
+//         "Key": "Questions/8/question.txt",
+//         "LastModified": "2019-12-10T22:02:23.000Z",
+//         "ETag": "\"bf5bf25bbf2ccd57d428c126e1eecfba\"",
+//         "Size": 22,
+//         "StorageClass": "STANDARD",
+//         "Owner": {
+//             "DisplayName": "jabernall",
+//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
+//         }
+//     },
+//     {
+//         "Key": "Questions/8/starter.cpp",
+//         "LastModified": "2019-12-10T22:02:23.000Z",
+//         "ETag": "\"db698e6202a428f255d49fb146371805\"",
+//         "Size": 137,
+//         "StorageClass": "STANDARD",
+//         "Owner": {
+//             "DisplayName": "jabernall",
+//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
+//         }
+//     },
+//     {
+//         "Key": "Questions/8/tests.cpp",
+//         "LastModified": "2019-12-10T22:02:23.000Z",
+//         "ETag": "\"f4cc0b0ec032947b4edb4ff952b59c1c\"",
+//         "Size": 15,
+//         "StorageClass": "STANDARD",
+//         "Owner": {
+//             "DisplayName": "jabernall",
+//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
+//         }
+//     }
+// ]
