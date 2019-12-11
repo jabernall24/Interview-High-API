@@ -1,7 +1,7 @@
 const client = require("../../db/db").client;
 const dynamoDB = require("../../db/db").dynamoDB;
 const s3 = require("../../db/db").s3;
-const fs = require('fs');
+
 exports.create_new_question = async function(req, res) {
 
 	let title = req.body.title;
@@ -251,136 +251,54 @@ exports.update_question = async function(req, res) {
 exports.get_full_question = async (req, res) => {
 	let question_id = req.params.question_id;
 	// var stringFiles = [];
-	let header = {"success": false}
-	let body = [] 
+	let header = {"success": false};
+	let body = [];
 
 	let answer = "Questions/" + question_id + "/answer.cpp"; 
 	let starter = "Questions/" + question_id + "/starter.cpp";
 	let question = "Questions/" + question_id + "/question.txt";
 
 	let paramAnswer = {
-		Bucket: 'interview-high',
+		Bucket: "interview-high",
 		Key: starter
 	};
 
 	let paramStarter = {
-		Bucket: 'interview-high',
+		Bucket: "interview-high",
 		Key: answer
 	};
 	let paramQuestions = {
-		Bucket: 'interview-high',
+		Bucket: "interview-high",
 		Key: question
 	};
 
 	await s3.getObject(paramAnswer).promise()
-		.then((resp)=>{
+		.then( (resp) => {
 			header["success"] = true;
 	 		body.push(resp.Body.toString());
 		})
-		.catch((error)=>{
-			return res.status(400).json(err);
-		})
+		.catch( (error) => {
+			return res.status(400).json(error);
+		});
 
 	await s3.getObject(paramQuestions).promise()
-		.then((resp)=>{
+		.then( (resp) => {
 			header["success"] = true;
 	 		body.push(resp.Body.toString());
 		})
-		.catch((error)=>{
-			return res.status(400).json(err);
-		})
+		.catch( (error) => {
+			return res.status(400).json(error);
+		});
 
 	await s3.getObject(paramStarter).promise()
-		.then((resp)=>{
+		.then( (resp) => {
 			header["success"] = true;
 	 		body.push(resp.Body.toString());
 		})
-		.catch((error)=>{
-			return res.status(400).json(err);
-		})
-
-
-
-	// await s3.getObject(paramAnswer, (err, data) =>{
-	// 	if (err) {
-	// 		return res.status(400).json(err);
-	// 	}
-	// 	try {
-	// 		// fs.writeFileSync(filepath, data.Body.toString())
-	// 		// let response = [
-	// 		// 	{
-	// 		// 		"success": true,
-	// 		// 		"message": "Answer"
-	// 		// 	},
-	// 		// 	data.Body.toString()
-	// 		// ];
-	// 		console.log(data.Body.toString())
-	// 		header["success"] = true;
-	// 		body.push(data.Body.toString());
-	// 		// return res.status(200).json(response);
-	// 	} catch(err) {
-	// 		return res.status(400).json({
-	// 			"message": "Nothing here bro 12345"
-	// 		});
+		.catch( (error) => {
+			return res.status(400).json(error);
+		});
 
 	return res.status(200).json([header, body]);
 
 };
-
-// [
-//     {
-//         "Key": "/questions/19/starter.cpp",
-//         "LastModified": "2019-12-10T10:24:56.000Z",
-//         "ETag": "\"db698e6202a428f255d49fb146371805\"",
-//         "Size": 137,
-//         "StorageClass": "STANDARD",
-//         "Owner": {
-//             "DisplayName": "jabernall",
-//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
-//         }
-//     },
-//     {
-//         "Key": "Questions/8/answer.cpp",
-//         "LastModified": "2019-12-10T22:02:23.000Z",
-//         "ETag": "\"13340b37c5fcff07b4405b8731f3bf62\"",
-//         "Size": 164,
-//         "StorageClass": "STANDARD",
-//         "Owner": {
-//             "DisplayName": "jabernall",
-//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
-//         }
-//     },
-//     {
-//         "Key": "Questions/8/question.txt",
-//         "LastModified": "2019-12-10T22:02:23.000Z",
-//         "ETag": "\"bf5bf25bbf2ccd57d428c126e1eecfba\"",
-//         "Size": 22,
-//         "StorageClass": "STANDARD",
-//         "Owner": {
-//             "DisplayName": "jabernall",
-//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
-//         }
-//     },
-//     {
-//         "Key": "Questions/8/starter.cpp",
-//         "LastModified": "2019-12-10T22:02:23.000Z",
-//         "ETag": "\"db698e6202a428f255d49fb146371805\"",
-//         "Size": 137,
-//         "StorageClass": "STANDARD",
-//         "Owner": {
-//             "DisplayName": "jabernall",
-//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
-//         }
-//     },
-//     {
-//         "Key": "Questions/8/tests.cpp",
-//         "LastModified": "2019-12-10T22:02:23.000Z",
-//         "ETag": "\"f4cc0b0ec032947b4edb4ff952b59c1c\"",
-//         "Size": 15,
-//         "StorageClass": "STANDARD",
-//         "Owner": {
-//             "DisplayName": "jabernall",
-//             "ID": "d5f07dc6452bfa6c71f36a8a78bcb00639365ef259cdb927e7e0feb3a6eaff48"
-//         }
-//     }
-// ]
