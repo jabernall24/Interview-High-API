@@ -37,7 +37,8 @@ exports.get_new_question_for_user = function(req, res) {
 		});
 	}
 
-	let user_id = req.params.user_id;
+	let user_id = parseInt(req.params.user_id);
+	
 	// Interview_High_User_Questions_History
 	var params = {
 		TableName : "Interview_High_User_Questions_History",
@@ -54,7 +55,9 @@ exports.get_new_question_for_user = function(req, res) {
 
 		let questions = [];
 		try {
-			questions = data["Items"][0]["questions"];
+			questions = data["Items"].map((name, i) => {
+				return data["Items"][i]["sk"];
+			});
 		} catch(err) {
 			return res.status(400).json({
 				"message": "Nothing here bro"
@@ -74,6 +77,5 @@ exports.get_new_question_for_user = function(req, res) {
 				return res.status(400).json(e);
 			});
 
-		// return res.status(200).json(questions);
 	});
 };
