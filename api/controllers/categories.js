@@ -57,9 +57,19 @@ exports.get_all_categories =  async function (req, res) {
 };
 
 exports.get_all_subcategories = async function (req, res){
-    
+	
+	let category = req.params.category;
+
+	if(category == undefined || category == "") {
+		return res.status(400).json([{
+			"success": false,
+			"message": "category is not defined"
+		}]);
+	}
+	category = category.toLowerCase();
 	let query = "SELECT subcategory FROM category WHERE category = $1::text;";
-	let params = [req.params.category];
+
+	let params = [category];
 
 	await client
 		.query(query, params)
@@ -104,17 +114,20 @@ exports.get_all_subcategories = async function (req, res){
 };
 
 exports.category_create = async (req , res) => {
-	const category = req.body.category;
-	const subcategory = req.body.subcategory;
+	let category = req.body.category;
+	let subcategory = req.body.subcategory;
 
 	if(category == undefined || category == "" || subcategory == undefined || subcategory == ""){
 		return res.status(400).json({"success": false, "message": "No category or subcategory defined"});
 	}
+	category = category.toLowerCase();
+	subcategory = subcategory.toLowerCase();
+
 	const query = "INSERT INTO category(category, subcategory) values($1::text, $2::text) RETURNING category , subcategory" ;
 
 	await client 
-		.query(query, [category,subcategory])
-		.then( (result) => {
+		.query(query, [category, subcategory])
+		.then( result => {
 
 			const response = [
 				{
@@ -130,12 +143,15 @@ exports.category_create = async (req , res) => {
 };
 
 exports.category_delete = async (req , res) => {
-	const category = req.params.category;
-	const subcategory = req.body.subcategory;
+	let category = req.params.category;
+	let subcategory = req.body.subcategory;
 
 	if(category == undefined || category == "" || subcategory == undefined || subcategory == ""){
 		return res.status(400).json({"success": false, "message": "No category or subcategory defined"});
 	}
+
+	category = category.toLowerCase();
+	subcategory = subcategory.toLowerCase();
 
 	const query = "DELETE FROM category WHERE category = $1::text "
 				+"AND subcategory = $2::text "
