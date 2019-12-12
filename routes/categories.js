@@ -12,8 +12,7 @@ app.get("/:category", CategoryController.get_all_subcategories);
 app.post("/create", CategoryController.category_create);
 
 //delete category
-app.delete("/:category" , CategoryController.category_delete); 
-
+app.delete("/:category" , CategoryController.category_delete);
 
 // update category
 // app.put("category", CategoryController.category_update);
