@@ -285,7 +285,7 @@ exports.user_delete = async (req, res) => {
 
 exports.user_question_history = async (req, res) => {
 	
-	let user_id = req.params.user_id;
+	let user_id = parseInt(req.params.user_id);
 
 	var params = {
 		TableName: "Interview_High_User_Questions_History",
