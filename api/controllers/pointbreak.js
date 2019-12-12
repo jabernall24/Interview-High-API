@@ -3,7 +3,7 @@
 var fs = require("fs");
 // var docker = require("dockerode");
 var exec = require("child_process").exec;
-var tmp = require("tmp");
+// var tmp = require("tmp");
 // var codeMap = {
 //     ".java" : "JAVA DOCKER FILE PATH",
 //     ".c" : "C DOCKER FILE PATH",
@@ -17,26 +17,26 @@ exports.pointbreak = async (req, res) => {
 	
 	body = body.join("\n");
 
-	tmp.file(async function _tempFileCreated(err, path, fd, cleanupCallback) {
-		if (err) return res.status(400).json(err);
-		// var tmpobj = tmp.dirSync();
-		fs.appendFileSync("main.cpp", body);
-		console.log(path);
+	// tmp.file(async function _tempFileCreated(err, path, fd, cleanupCallback) {
+	// 	if (err) return res.status(400).json(err);
+	// var tmpobj = tmp.dirSync();
+	fs.appendFileSync("main.cpp", body);
+	// console.log(path);
 
-		await mikesfunction("/tmp","main.cpp");
+	await mikesfunction("/tmp","main.cpp");
 
-		fs.readFile("./out.txt", (err, data) =>{
-			if(err) return res.status(400).json(err);
-			if(data.toString() === "Hello World!\n"){
-				return res.status(200).json({"message":true});
-			}
-			else{
-				return  res.status(400).json({"message": false});
-			}
-		});
-		console.log(fd, cleanupCallback);
-
+	fs.readFile("./out.txt", (err, data) =>{
+		if(err) return res.status(400).json(err);
+		if(data.toString() === "Hello World!\n"){
+			return res.status(200).json({"message":true});
+		}
+		else{
+			return  res.status(400).json({"message": false});
+		}
 	});
+	// 	console.log(fd, cleanupCallback);
+
+	// });
 
 };
 
