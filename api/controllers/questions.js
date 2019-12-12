@@ -1,6 +1,16 @@
 const client = require("../../db/db").client;
-const dynamoDB = require("../../db/db").dynamoDB;
 const s3 = require("../../db/db").s3;
+
+function readFile(filename, cb) {		
+	const fs = require("fs");
+	fs.readFile(filename, function read(err, data) {
+		if (err) {
+			cb(err);
+		}
+		
+		cb(data);
+	});
+}
 
 exports.create_new_question = async function(req, res) {
 
@@ -11,84 +21,92 @@ exports.create_new_question = async function(req, res) {
 	let company = req.body.company;
 	let rating = 0;
 	let rating_counter = 0;
-	let question = req.body.question;
-	let answer = req.body.answer;
 
 	if(title == undefined || title == ""
 	|| category == undefined || category == ""
 	|| subcategory == undefined || subcategory == ""
 	|| difficulty == undefined || difficulty == ""
-	|| company == undefined || company == "" 
-	|| question== undefined || question== ""
-	|| answer == undefined || answer == ""){
+	|| company == undefined || company == ""){
 		return res.status(400).json({"success": false, "message": "Information missing need all"});
 	}
 
 	let queryString = "INSERT INTO question(title, category, subcategory, difficulty, company, rating, rating_counter) values($1::text, $2::text, $3::text, $4::int, $5::text, $6::int, $7::int) RETURNING *;";
 	let queryValues = [title, category, subcategory, difficulty, company, rating, rating_counter];
 
-	client
+	await client
 		.query(queryString, queryValues)
 		.then(result => {
-			let field = result.rows[0];
-			console.log(field.question_id);
 
-			var params = {
-				RequestItems: {
-					"Interview-High-Questions": [
-						{
-							PutRequest: {
-								Item: {
-									"pk": { "N": field.question_id.toString() },
-									"sk": { "S": "Q" },
-									"Question": { "L": question.map(x => { return { "S": x.toString() };}) }
+			const starterFilePath = req.files.starter.tempFilePath;
+			const questionFilePath = req.files.question.tempFilePath;
+			const answerFilePath = req.files.answer.tempFilePath;
+			const testFilePath = req.files.tests.tempFilePath;
+
+			const BUCKET_NAME = "interview-high";
+
+			readFile(starterFilePath, function(starterData) {
+				readFile(questionFilePath, function(questionData) {
+					readFile(answerFilePath, function(answerData) {
+						readFile(testFilePath, function(testsData) {
+							let params = {
+								Bucket: BUCKET_NAME,
+								Key: "Questions/" + result.rows[0]["question_id"] + "/starter.cpp", // File name you want to save as in S3
+								Body: starterData
+							};
+						
+							s3.upload(params, function(err) {
+								if (err) {
+									return res.status(400).json(err);
 								}
-							}
-						},
-						{
-							PutRequest: {
-								Item: {
-									"pk": { "N": field.question_id.toString() },
-									"sk": { "S": "A" },
-									"Answer": { "L": answer.map(x => { return { "S": x.toString() };}) }
+							});
+
+							params = {
+								Bucket: BUCKET_NAME,
+								Key: "Questions/" + result.rows[0]["question_id"] + "/question.txt", // File name you want to save as in S3
+								Body: questionData
+							};
+
+							s3.upload(params, function(err) {
+								if (err) {
+									return res.status(400).json(err);
 								}
-							}
-						}
-					]
-				}
-			};
+							});
 
-			dynamoDB.batchWriteItem(params, function(err, data) {
-				console.log(data);
-				if (err) {
-					const response = [
-						{
-							"success": false,
-							"message": err
-						},
-						{
-							"question_id": null
-						}
-					];
 
-					return res.status(400).json(response);
-				} else {
+							params = {
+								Bucket: BUCKET_NAME,
+								Key: "Questions/" + result.rows[0]["question_id"] + "/answer.cpp", // File name you want to save as in S3
+								Body: answerData
+							};
 
-					const response = [
-						{
-							"success": true,
-							"message": ""
-						},
-						{
-							"question_id": field.question_id
-						}
-					];
+							s3.upload(params, function(err) {
+								if (err) {
+									return res.status(400).json(err);
+								}
+							});
 
-					return res.status(200).json(response);
-				}
+
+							params = {
+								Bucket: BUCKET_NAME,
+								Key: "Questions/" + result.rows[0]["question_id"] + "/tests.cpp", // File name you want to save as in S3
+								Body: testsData
+							};
+
+							s3.upload(params, function(err) {
+								if (err) {
+									return res.status(400).json(err);
+								}
+								return res.status(200).json({
+									"question_id": result.rows[0]["question_id"]
+								});
+							});				
+						});
+					});
+				});
 			});
 		})
 		.catch(e => {
+			console.log(e);
 			const response = [
 				{
 					"success": false,
@@ -275,7 +293,7 @@ exports.get_full_question = async (req, res) => {
 	await s3.getObject(paramAnswer).promise()
 		.then( (resp) => {
 			header["success"] = true;
-	 		body.push(resp.Body.toString());
+			body.push(resp.Body.toString());
 		})
 		.catch( (error) => {
 			return res.status(400).json(error);
@@ -284,7 +302,7 @@ exports.get_full_question = async (req, res) => {
 	await s3.getObject(paramQuestions).promise()
 		.then( (resp) => {
 			header["success"] = true;
-	 		body.push(resp.Body.toString());
+			body.push(resp.Body.toString());
 		})
 		.catch( (error) => {
 			return res.status(400).json(error);
@@ -293,7 +311,7 @@ exports.get_full_question = async (req, res) => {
 	await s3.getObject(paramStarter).promise()
 		.then( (resp) => {
 			header["success"] = true;
-	 		body.push(resp.Body.toString());
+			body.push(resp.Body.toString());
 		})
 		.catch( (error) => {
 			return res.status(400).json(error);
