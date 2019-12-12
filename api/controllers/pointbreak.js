@@ -15,7 +15,7 @@ exports.pointbreak = async (req, res) => {
 	
 	let body = req.body.code;
 	console.log(body);
-	return res.status(200).json("jo");
+	return res.status(200).json(body);
 	// let file_path =  req.files.main.tempFilePath;
 	// console.log(file_path);
 	// let fname = req.files.main.name;
