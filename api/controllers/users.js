@@ -303,12 +303,15 @@ exports.user_question_history = async (req, res) => {
 				return data["Items"][i]["sk"];
 			});
 
-			const queryString = "SELECT * FROM question WHERE question_id = ANY($1);";
+			const placeholders = questions.map(function(name,i) { 
+				return "$"+(i+1); 
+			}).join(",");
+	
+			const queryString = "SELECT * FROM question WHERE question_id IN (" + placeholders + ");";
 
 			await client
 				.query(queryString, questions)
 				.then(result => {
-					console.log(result.rows);
 					return res.status(200).json(result.rows);
 				})
 				.catch(e => {
