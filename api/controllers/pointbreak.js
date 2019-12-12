@@ -20,9 +20,9 @@ exports.pointbreak = async (req, res) => {
 	tmp.file(async function (err, path, fd, cleanupCallback) {
 		if (err) return res.status(400).json(err);
 		console.log(path);
-		fs.writeFileSync(path + "test", body);
+		fs.writeFileSync(path + "/main.cpp", body);
 
-		await mikesfunction("tmp","main.cpp");
+		await mikesfunction(path,"main.cpp");
 
 		fs.readFile("./out.txt", (err, data) =>{
 			if(err) return res.status(400).json(err);
@@ -33,7 +33,7 @@ exports.pointbreak = async (req, res) => {
 				return  res.status(400).json({"message": false});
 			}
 		});
-		
+
 		console.log(fd, cleanupCallback);
 
 	});
