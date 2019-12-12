@@ -17,13 +17,11 @@ exports.pointbreak = async (req, res) => {
 	
 	body = body.join("\n");
 
-	// tmp.file(async function _tempFileCreated(err, path, fd, cleanupCallback) {
+	// tmp.file(function (err, path, fd, cleanupCallback) {
 	// 	if (err) return res.status(400).json(err);
-	// var tmpobj = tmp.dirSync();
-	fs.appendFileSync("main.cpp", body);
-	// console.log(path);
+	fs.writeFileSync("tmp", body);
 
-	await mikesfunction("/tmp","main.cpp");
+	await mikesfunction("tmp","main.cpp");
 
 	fs.readFile("./out.txt", (err, data) =>{
 		if(err) return res.status(400).json(err);
@@ -34,6 +32,9 @@ exports.pointbreak = async (req, res) => {
 			return  res.status(400).json({"message": false});
 		}
 	});
+	// });
+	// fs.appendFileSync("main.cpp", body);
+	// console.log(path);
 	// 	console.log(fd, cleanupCallback);
 
 	// });
