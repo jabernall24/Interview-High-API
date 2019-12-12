@@ -20,12 +20,12 @@ exports.pointbreak = async (req, res) => {
 	const data = new Uint8Array(Buffer.from(body));
 
 	fs.writeFile("main.cpp", data, async (err) => {
-		if (err) return res.status(400).json(err);
+		if (err) return res.status(400).json("JENR: " + err);
 		
 		await mikesfunction("./","main.cpp");
 
 		fs.readFile("./out.txt", (err, data) =>{
-			if(err) return res.status(400).json(err);
+			if(err) return res.status(400).json("MY ERROR: " + err);
 			if(data.toString() === "Hello World!\n"){
 				return res.status(200).json({"message":true});
 			}
