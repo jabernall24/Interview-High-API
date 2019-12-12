@@ -20,14 +20,10 @@ exports.pointbreak = async (req, res) => {
 	tmp.file(async function (err, path, fd, cleanupCallback) {
 		if (err) return res.status(400).json(err);
 		console.log(path);
-		const promise = fs.writeFileSync(path + "/main.cpp", body).Promise();
-
-		await promise.then(result => {
-			return res.status(200).json(result);
-		})
-			.catch(e => {
-				return res.status(400).json(e);
-			});
+		
+		fs.writeFileSync(path + "/main.cpp", body).subscribe(s => {
+			return res.status(200).json(s);
+		});
 
 		await mikesfunction(path,"main.cpp");
 
