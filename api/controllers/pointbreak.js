@@ -3,6 +3,7 @@
 var fs = require("fs");
 // var docker = require("dockerode");
 var exec = require("child_process").exec;
+var tmp = require("tmp");
 // var codeMap = {
 //     ".java" : "JAVA DOCKER FILE PATH",
 //     ".c" : "C DOCKER FILE PATH",
@@ -11,23 +12,17 @@ var exec = require("child_process").exec;
 // };
 
 exports.pointbreak = async (req, res) => {
-	// console.log("HERE");
 	
 	let body = req.body.code;
 	
 	body = body.join("\n");
 
-	// const fs = require("fs");
+	tmp.file(async function _tempFileCreated(err, path, fd, cleanupCallback) {
+		if (err) return res.status(400).json(err);
 
-	let file_path = "/tmp/test";
+		fs.appendFileSync(path + "/message.txt", body);
 
-	fs.writeFile(file_path, body, async function(err) {
-
-		if(err) {
-			return res.status(400).json(err);
-		}
-
-		await mikesfunction(file_path,"main.cpp");
+		await mikesfunction(path + "/message.txt","main.cpp");
 
 		fs.readFile("./out.txt", (err, data) =>{
 			if(err) return res.status(400).json(err);
@@ -38,25 +33,10 @@ exports.pointbreak = async (req, res) => {
 				return  res.status(400).json({"message": false});
 			}
 		});
-	}); 
-	// let file_path =  req.files.main.tempFilePath;
-	// console.log(file_path);
-	// let fname = req.files.main.name;
-	// let str;
-	// await mikesfunction(file_path,"main.cpp");
+		console.log(fd, cleanupCallback);
 
-	// fs.readFile("./out.txt", (err, data) =>{
-	// 	if(err) return res.status(400).json(err);
+	});
 
-	// 	str = data.toString();
-	// 	if(str === "Hello World!\n"){
-	// 		return res.status(200).json({"message":true});
-	// 	}
-	// 	else{
-	// 		return  res.status(400).json({"message": false});
-	// 	}
-	// });
-    
 };
 
 async function mikesfunction(file_path, fname) {
