@@ -3,7 +3,7 @@
 var fs = require("fs");
 // var docker = require("dockerode");
 var exec = require("child_process").exec;
-var tmp = require("tmp");
+// var tmp = require("tmp");
 // var codeMap = {
 //     ".java" : "JAVA DOCKER FILE PATH",
 //     ".c" : "C DOCKER FILE PATH",
@@ -17,15 +17,12 @@ exports.pointbreak = async (req, res) => {
 	
 	body = body.join("\n");
 
-	tmp.file(async function (err, path, fd, cleanupCallback) {
-		if (err) return res.status(400).json(err);
-		console.log(path);
-		
-		fs.writeFileSync(path + "/main.cpp", body).subscribe(s => {
-			return res.status(200).json(s);
-		});
+	const data = new Uint8Array(Buffer.from(body));
 
-		await mikesfunction(path,"main.cpp");
+	fs.writeFile("main.cpp", data, async (err) => {
+		if (err) return res.status(400).json(err);
+		
+		await mikesfunction("./","main.cpp");
 
 		fs.readFile("./out.txt", (err, data) =>{
 			if(err) return res.status(400).json(err);
@@ -36,11 +33,7 @@ exports.pointbreak = async (req, res) => {
 				return  res.status(400).json({"message": false});
 			}
 		});
-
-		console.log(fd, cleanupCallback);
-
 	});
-
 };
 
 async function mikesfunction(file_path, fname) {
