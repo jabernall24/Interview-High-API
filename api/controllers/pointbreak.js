@@ -1,8 +1,8 @@
 // const client = require("../../db/db").client;
 // const dynamoDB = require("../../db/db").dynamoDB;
 var fs = require("fs");
-var docker = require("dockerode");
-// var exec = require("child_process").exec;
+// var docker = require("dockerode");
+var exec = require("child_process").exec;
 // var codeMap = {
 //     ".java" : "JAVA DOCKER FILE PATH",
 //     ".c" : "C DOCKER FILE PATH",
