@@ -23,7 +23,7 @@ exports.pointbreak = async (req, res) => {
 		fs.appendFileSync("main.cpp", body);
 		console.log(path);
 
-		await mikesfunction("tmp/","main.cpp");
+		await mikesfunction("tmp","main.cpp");
 
 		fs.readFile("./out.txt", (err, data) =>{
 			if(err) return res.status(400).json(err);
