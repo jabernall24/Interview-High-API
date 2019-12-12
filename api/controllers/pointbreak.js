@@ -12,9 +12,9 @@ var exec = require("child_process").exec;
 
 exports.pointbreak = async (req, res) => {
 	let file_path =  req.files.main.tempFilePath;
-	let fname = req.files.main.name;
+	// let fname = req.files.main.name;
 	let str;
-	await mikesfunction(file_path,fname);
+	await mikesfunction(file_path,"main.cpp");
 
 	fs.readFile("./out.txt", (err, data) =>{
 		if(err) return res.status(400).json(err);
@@ -56,6 +56,7 @@ function run(cmd){
 				if (err) {
 					console.log(err);
 					return reject(err);
+
 				}
 				console.log(out);
 				console.log(stderr);
