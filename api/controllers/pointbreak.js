@@ -12,6 +12,7 @@ var exec = require("child_process").exec;
 
 exports.pointbreak = async (req, res) => {
 	let file_path =  req.files.main.tempFilePath;
+	console.log(file_path);
 	// let fname = req.files.main.name;
 	let str;
 	await mikesfunction(file_path,"main.cpp");
