@@ -31,7 +31,7 @@ exports.pointbreak = async (req, res) => {
 };
 
 async function mikesfunction(file_path, fname) {
-	var start = "docker run -it -d --name=test user:latest";
+	var start = "docker run -it -d --name=test user:cpp";
 	var f_to_c = "docker cp " + file_path + "/" + fname + " test:.";
 	var compile = "docker exec test g++ " + fname;
 	var execute = "docker exec test sh -c './a.out > out.txt'";
