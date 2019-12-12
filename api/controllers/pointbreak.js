@@ -21,6 +21,7 @@ exports.pointbreak = async (req, res) => {
 		if (err) return res.status(400).json(err);
 
 		fs.appendFileSync(path + "/message.txt", body);
+		console.log(path);
 
 		await mikesfunction(path + "/message.txt","main.cpp");
 
