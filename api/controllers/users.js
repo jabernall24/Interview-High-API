@@ -294,13 +294,28 @@ exports.user_question_history = async (req, res) => {
 			":pk": user_id 
 		},
 	};
-	dynamoDB.query(params, (err, data) => {
+	dynamoDB.query(params, async (err, data) => {
 		if(err){
 			return res.status(400).json(err);
 		}
 		try{
-			let questions = data["Items"][0]["questions"];
-			return res.status(200).json( {"success": true,  questions});
+			let questions = data["Items"].map((name, i) => {
+				return data["Items"][i]["sk"];
+			});
+
+			questions = questions.join(",");
+
+			const queryString = "SELECT * FROM question WHERE question_id in ($1);";
+
+			await client
+				.query(queryString, questions)
+				.then(result => {
+					console.log(result.rows);
+					return res.status(200).json(result.rows);
+				})
+				.catch(e => {
+					return res.status(400).json(e);
+				});
 		}catch(err){
 			return res.status(400).json({
 				"message": "Nothing here bro"
