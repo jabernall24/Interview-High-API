@@ -303,9 +303,7 @@ exports.user_question_history = async (req, res) => {
 				return data["Items"][i]["sk"];
 			});
 
-			questions = questions.join(",");
-
-			const queryString = "SELECT * FROM question WHERE question_id in ($1);";
+			const queryString = "SELECT * FROM question WHERE question_id = ANY($1);";
 
 			await client
 				.query(queryString, questions)
