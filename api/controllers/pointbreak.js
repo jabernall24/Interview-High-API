@@ -26,11 +26,11 @@ exports.pointbreak = async (req, res) => {
 
 		fs.readFile("./out.txt", (err, data) =>{
 			if(err) return res.status(400).json("MY ERROR: " + err);
-			if(data.toString() === "Hello World!\n"){
+			if(data.toString() === "Hello World!"){
 				return res.status(200).json({"message":true});
 			}
 			else{
-				return  res.status(400).json({"message": false});
+				return  res.status(200).json({"message": false});
 			}
 		});
 	});
