@@ -27,19 +27,17 @@ exports.pointbreak = async (req, res) => {
 			return res.status(400).json(err);
 		}
 
-		
-
 		await mikesfunction(file_path,"main.cpp");
-		return res.status(200).json("sdaf");
-		// fs.readFile("./out.txt", (err, data) =>{
-		// 	if(err) return res.status(400).json(err);
-		// 	if(data.toString() === "Hello World!\n"){
-		// 		return res.status(200).json({"message":true});
-		// 	}
-		// 	else{
-		// 		return  res.status(400).json({"message": false});
-		// 	}
-		// });
+
+		fs.readFile("./out.txt", (err, data) =>{
+			if(err) return res.status(400).json(err);
+			if(data.toString() === "Hello World!\n"){
+				return res.status(200).json({"message":true});
+			}
+			else{
+				return  res.status(400).json({"message": false});
+			}
+		});
 	}); 
 	// let file_path =  req.files.main.tempFilePath;
 	// console.log(file_path);
