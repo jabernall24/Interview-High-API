@@ -1,34 +1,27 @@
-  
-# Backend Container - This is the MVP Version
-# TODO: Multi-stage build, will require a linter and tree shaking before moving the reminenants to the final container
+# Start from a Debian image with the latest version of Go installed
+# and a workspace (GOPATH) configured at /go.
+FROM golang:latest
 
-FROM alpine:latest
+# Create WORKDIR (working directory) for app
+WORKDIR /go/src/github.com/gilcrest/go-API-template
 
-# Include Node.js support and NPM
+# Copy the local package files to the container's workspace
+# (in the above WORKDIR)
+ADD . .
 
-RUN apk --no-cache add nodejs-current npm
+# Switch WORKDIR to directory where server main.go lives
+WORKDIR /go/src/github.com/gilcrest/go-API-template/cmd/server
 
-# Copies over the package.json and lock from the git repo so as to decrease the build times
-COPY package.json ./
+# Build the go-API-template userServer command inside the container
+# at the most recent WORKDIR
+RUN go build -o userServer
 
-# Installs the dependencies as needed and creates the needed directories for building
-RUN npm install && mkdir interview-high-backend && mv ./node_modules ./interview-high-backend
+# Run the userServer command by default when the container starts.
+# runs command at most recent WORKDIR
+ENTRYPOINT ./userServer
 
-# Sets working directory to the angular application
-WORKDIR /interview-high-backend
+# Document that the container uses port 8080
+EXPOSE 8080
 
-# Copies over the actual express app into the container
-COPY . .
-
-# Set enviorment variables, URL requires local enviroment variable to be set before the build starts
-
-ENV PORT 80
-
-ENV URL ${URL}
-
-# Open the port needed
-
-EXPOSE 80
-
-# Installs the dependencies and starts the express application
-RUN npm install
+# Document that the container uses port 5432
+EXPOSE 5432
