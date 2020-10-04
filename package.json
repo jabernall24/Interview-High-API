@@ -25,7 +25,7 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "eslint": "npx eslint api/* db/* routes/* test/* app.js"
+    "eslint": "npx eslint api/* db/* routes/* test/* app.js --fix"
   },
   "pre-commit": [
     "eslint",

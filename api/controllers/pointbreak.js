@@ -14,6 +14,8 @@ var exec = require("child_process").exec;
 exports.pointbreak = async (req, res) => {
 	
 	let body = req.body.code;
+	const user_id = req.body.user_id;
+	const question_id = req.body.question_id;
 	
 	body = body.join("\n");
 
@@ -22,7 +24,7 @@ exports.pointbreak = async (req, res) => {
 	fs.writeFile("main.cpp", data, async (err) => {
 		if (err) return res.status(400).json("JENR: " + err);
 		
-		await mikesfunction("./","main.cpp");
+		await mikesfunction("./","main.cpp", user_id, question_id);
 
 		fs.readFile("./out.txt", (err, data) =>{
 			if(err) return res.status(400).json("MY ERROR: " + err);
@@ -36,28 +38,29 @@ exports.pointbreak = async (req, res) => {
 	});
 };
 
-async function mikesfunction(file_path, fname) {
-	var start = "docker run -it -d --name=test user:cpp";
-	var f_to_c = "docker cp " + file_path + "/" + fname + " test:.";
-	var compile = "docker exec test g++ " + fname;
-	var execute = "docker exec test sh -c './a.out > out.txt'";
-	var c_to_f = "docker cp test:/out.txt .";
-	var stop = "docker stop test";
-	var rm = "docker rm test";
+async function mikesfunction(file_path, fname, user_id, question_id) {
+	const container_name = user_id + "_" + question_id;
+	const start = "docker run -it -d --name=" + container_name + " user:cpp";
+	const f_to_c = "docker cp " + file_path + "/" + fname + " " + container_name + ":.";
+	const compile = "docker exec " + container_name + " g++ " + fname;
+	const execute = "docker exec " + container_name + " sh -c './a.out > out.txt'";
+	const c_to_f = "docker cp " + container_name + ":/out.txt .";
+	const stop = "docker stop " + container_name;
+	const rm = "docker rm " + container_name;
 
-	await run(start);
-	await run(f_to_c);
-	await run(compile);
-	await run(execute);
-	await run(c_to_f);
-	await run(stop);
-	await run(rm);
+	await run(start, false);
+	await run(f_to_c, false);
+	await run(compile, false);
+	await run(execute, true);
+	await run(c_to_f, false);
+	await run(stop, false);
+	await run(rm, false);
 
 }
 
-function run(cmd){
+function run(cmd, isExecute){
 	return new Promise((resolve, reject) => {
-		try{
+		try {
 			exec(cmd, function(err, out, stderr) {
 				if (err) {
 					console.log(err);
@@ -68,10 +71,15 @@ function run(cmd){
 				console.log(stderr);
 				return resolve(out);
 			}); 
-		}  
+		} 
 		catch(err){
 			console.log(err);
-			throw err;
+			return reject(err);
+			// throw err;
+		}
+
+		if(isExecute) {
+			setTimeout(function() {reject("timeout");}, 10000);
 		}
 	});
 }

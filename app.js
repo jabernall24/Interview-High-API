@@ -26,7 +26,7 @@ app.use("/pointbreak", routes.pointbreak);
 app.use("/companies", routes.company);
 app.use("/emails", routes.emails);
 
-if(process.env.HOST != "localhost") {
+if(process.env.HOST != "0.0.0.0") {
 	// Certificate
 	const privateKey = fs.readFileSync("/etc/letsencrypt/live/api.interviewhigh.com/privkey.pem", "utf8");
 	const certificate = fs.readFileSync("/etc/letsencrypt/live/api.interviewhigh.com/fullchain.pem", "utf8");

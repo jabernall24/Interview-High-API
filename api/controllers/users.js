@@ -4,32 +4,78 @@ const s3 = require("../../db/db").s3;
 const validator = require("email-validator");
 
 exports.user_create = async (req, res) => {
-	const email = req.body.email.toLowerCase();
+	let email = req.body.email;
 	const password = req.body.password;
-	const is_subscribed = req.body.is_subscribed;
-	const category = req.body.category.toLowerCase();
-	const subcategories = req.body.subcategories;
+	let is_subscribed = req.body.is_subscribed;
+	let category = req.body.category;
+	let subcategories = req.body.subcategories;
+
+	if(email == undefined || email == "") {
+		return res.status(400).json({
+			"message": "email not provided"
+		});
+	}
+
+	email = email.toLowerCase();
+
+	if(password == undefined || password == "") {
+		return res.status(400).json({
+			"message": "password not provided"
+		});
+	}
+
+	if(is_subscribed == undefined || is_subscribed == "") {
+		return res.status(400).json({
+			"message": "is_subscribed not provided"
+		});
+	}
+	is_subscribed = (subcategories == "true");
+
+	if(category == undefined || category == "") {
+		return res.status(400).json({
+			"message": "category not provided"
+		});
+	}
+
+	category = category.toLowerCase();
+
+	if(subcategories == undefined || subcategories.length == 0) {
+		return res.status(400).json({
+			"message": "subcategories not provided"
+		});
+	}
 
 	if(!validator.validate(email)) {
-		return res.status(400).json({"message": "Invalid Email"});
+		return res.status(400).json({"message": "Invalid email"});
 	}
-
-	const CATEGORIES = ["computer science"];
-
-	if (CATEGORIES.indexOf(category) <= -1) {
-		return res.status(400).json({"message": "Invalid Category"});
-	}
-
+	
 	for(let i = 0; i < subcategories.length; i++) {
+		if(subcategories[i] == undefined || subcategories[i] == "") {
+			return res.status(400).json({
+				"message": "subcategories not provided"
+			});
+		}
 		subcategories[i] = subcategories[i].toLowerCase();
 	}
 
 	await client
-		.query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) values($1::text, crypt($2::text, gen_salt('bf', 14)), $3::boolean, $4::text, $5::text[]) RETURNING user_id;", [email, password, is_subscribed, category, subcategories])
-		.then(result => res.status(200).json(result.rows[0]))
+		.query("INSERT INTO users(email, pwd_hash, is_subscribed, category, subcategories) " + 
+				"SELECT $1::text, crypt($2::text, gen_salt('bf', 14)), $3::boolean, $4::text, $5::text[] " +  
+				"WHERE EXISTS (SELECT * FROM category WHERE category = $6) " +
+				"RETURNING user_id, email, is_subscribed, category, subcategories;", 
+		[email, password, is_subscribed, category, subcategories, category])
+		.then(result => {
+			if(result.rowCount == 0) {
+				return res.status(400).json({
+					"message": "Invalid category"
+				});
+			}
+
+			return res.status(200).json(result.rows[0]);
+		})
 		.catch(e => {
 			if(e.code == "23505") {
-				return res.status(400).json({"message": "Email already exists."});
+				return res.status(400).json({"message": "Email already exists"});
 			} else {
 				return res.status(400).json({"message": "Error: " + e});
 			}

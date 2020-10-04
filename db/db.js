@@ -1,4 +1,3 @@
-
 var AWS = require("aws-sdk");
 
 AWS.config.update({accessKeyId: process.env.InterviewHighDynamoDBAccessKeyId, secretAccessKey: process.env.InterviewHighDynamoDBSecretAccessKey, region: process.env.InterviewHighDynamoDBRegion});
